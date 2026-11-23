@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Starfield from '../components/Starfield';
 interface Props { title?: string; description?: string }
 const { title, description = 'A learning map: topics are suns, subtopics orbit them. Master a node to light the path outward.' } = Astro.props;
 const base = import.meta.env.BASE_URL;
@@ -17,6 +18,7 @@ const base = import.meta.env.BASE_URL;
     <title>{title ? `${title} · Orbit` : 'Orbit: a learning map'}</title>
   </head>
   <body>
+    <Starfield client:only="preact" />
     <header class="site-head">
       <a class="logo" href={base}><span class="logo-dot" />orbit</a>
       <span class="muted tagline">Master a node to light the path outward.</span>
