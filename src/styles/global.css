@@ -193,3 +193,7 @@ button { font: inherit; color: inherit; }
 .rate .btn small { font-size: .68rem; color: var(--muted); font-weight: 400; }
 @media (max-width: 420px) { .rate { grid-template-columns: repeat(2, 1fr); } }
 .chip.on { border-color: var(--accent); color: var(--accent); }
+
+.bar-right { align-items: center; }
+.vol { width: 88px; height: 36px; accent-color: var(--accent); cursor: pointer; touch-action: pan-x; }
+.vol:disabled { opacity: .35; cursor: default; }

@@ -4,7 +4,8 @@
 // pass is crossfaded into the next for a seamless loop.
 // On by default (browsers start it at the first tap); turning it off is remembered.
 const KEY = 'orbit.music';
-const VOLUME = 0.45;
+const VOL_KEY = 'orbit.musicVolume';
+const DEFAULT_VOLUME = 0.45;
 const XFADE = 4; // seconds of overlap between the end of one pass and the start of the next
 const SRC = `${import.meta.env.BASE_URL}music/space.mp3`;
 
@@ -20,6 +21,19 @@ interface Track { buf: AudioBuffer; start: number; end: number }
 export const isMusicOn = () => { try { return localStorage.getItem(KEY) !== '0'; } catch { return true; } };
 const remember = (on: boolean) => { try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {} };
 export const isPlaying = () => playing;
+
+/** Saved music volume, 0..1. */
+export function getVolume() {
+  try {
+    const v = parseFloat(localStorage.getItem(VOL_KEY) ?? '');
+    return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : DEFAULT_VOLUME;
+  } catch { return DEFAULT_VOLUME; }
+}
+export function setVolume(v: number) {
+  v = Math.min(1, Math.max(0, v));
+  try { localStorage.setItem(VOL_KEY, String(v)); } catch {}
+  if (ctx && master && playing) master.gain.setTargetAtTime(Math.max(0.0001, v), ctx.currentTime, 0.05);
+}
 
 /** Finds where the audio actually starts and ends, skipping near-silent padding. */
 function trim(buf: AudioBuffer): Track {
@@ -68,7 +82,7 @@ export function startMusic() {
   const c = ctx;
   playing = true; remember(true);
   master = c.createGain();
-  master.gain.value = VOLUME;
+  master.gain.value = Math.max(0.0001, getVolume());
   master.connect(c.destination);
   const out = master;
   load(c).then((t) => pass(c, out, t, c.currentTime + 0.05, true)).catch(() => { playing = false; });
