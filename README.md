@@ -20,6 +20,7 @@ Live: https://clarkngo.github.io/orbit/
   The **N due** chip jumps to the next node that's due.
 - **Unlocking:** a node's children unlock once it reaches mastery 2.
 - **Sound:** synthesized sci-fi effects (warp in and out, sonar blips, unlock chirps, a star chord on mastery). Use the 🔊 chip to mute.
+- **Ambient music:** the ♪ chip plays generative space ambient (a slow breathing drone pad, sparse echoing chimes, soft solar wind), made live in the browser. It never repeats exactly, so it loops without a seam. It's off by default and remembers your choice.
 
 ## Progress and sync
 

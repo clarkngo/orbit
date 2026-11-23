@@ -192,3 +192,4 @@ button { font: inherit; color: inherit; }
 .rate .btn { display: grid; gap: 2px; line-height: 1.2; }
 .rate .btn small { font-size: .68rem; color: var(--muted); font-weight: 400; }
 @media (max-width: 420px) { .rate { grid-template-columns: repeat(2, 1fr); } }
+.chip.on { border-color: var(--accent); color: var(--accent); }

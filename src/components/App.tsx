@@ -6,6 +6,7 @@ import {
 } from '../lib/progress';
 import Sync from './Sync';
 import { sfx, isMuted, setMuted } from '../lib/sfx';
+import { isMusicOn, startMusic, stopMusic } from '../lib/music';
 
 interface Props { maps: MapNode[] }
 interface Entry { node: MapNode; parent?: MapNode; path: MapNode[] }
@@ -44,6 +45,14 @@ export default function App({ maps }: Props) {
   const [dir, setDir] = useState<'in' | 'out'>('in');
   const [syncOpen, setSyncOpen] = useState(false);
   const [muted, setM] = useState(() => isMuted());
+  const [music, setMusic] = useState(() => isMusicOn());
+  // Browsers only allow audio after a user gesture, so a remembered "on" starts at the first tap.
+  useEffect(() => {
+    if (!isMusicOn()) return;
+    const go = () => startMusic();
+    addEventListener('pointerdown', go, { once: true });
+    return () => removeEventListener('pointerdown', go);
+  }, []);
   const [, tick] = useState(0);
 
   // Keep the URL hash in step with the focused node so the back button zooms out.
@@ -117,6 +126,9 @@ export default function App({ maps }: Props) {
             {due.length} due
           </button>
           <button class="chip" onClick={() => setSyncOpen(true)}>Sync</button>
+          <button class={`chip ${music ? 'on' : ''}`} aria-pressed={music} aria-label={music ? 'Stop ambient music' : 'Play ambient music'}
+            title={music ? 'Ambient music on' : 'Ambient music off'}
+            onClick={() => { music ? stopMusic() : startMusic(); setMusic(!music); }}>♪</button>
           <button class="chip" aria-pressed={!muted} aria-label={muted ? 'Turn sound on' : 'Turn sound off'} title={muted ? 'Sound off' : 'Sound on'}
             onClick={() => { setMuted(!muted); setM(!muted); if (muted) sfx.beep(); }}>{muted ? '🔇' : '🔊'}</button>
         </div>
