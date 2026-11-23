@@ -6,7 +6,7 @@ import {
 } from '../lib/progress';
 import Sync from './Sync';
 import { sfx, isMuted, setMuted } from '../lib/sfx';
-import { isMusicOn, startMusic, stopMusic } from '../lib/music';
+import { isMusicOn, isPlaying, startMusic, stopMusic } from '../lib/music';
 
 interface Props { maps: MapNode[] }
 interface Entry { node: MapNode; parent?: MapNode; path: MapNode[] }
@@ -49,9 +49,16 @@ export default function App({ maps }: Props) {
   // Browsers only allow audio after a user gesture, so a remembered "on" starts at the first tap.
   useEffect(() => {
     if (!isMusicOn()) return;
-    const go = () => startMusic();
-    addEventListener('pointerdown', go, { once: true });
-    return () => removeEventListener('pointerdown', go);
+    const go = (e: Event) => {
+      // the ♪ chip handles its own tap; anything else starts the music
+      if ((e.target as Element | null)?.closest?.('.music-chip')) return;
+      startMusic();
+      removeEventListener('pointerdown', go);
+      removeEventListener('keydown', go);
+    };
+    addEventListener('pointerdown', go);
+    addEventListener('keydown', go);
+    return () => { removeEventListener('pointerdown', go); removeEventListener('keydown', go); };
   }, []);
   const [, tick] = useState(0);
 
@@ -126,9 +133,9 @@ export default function App({ maps }: Props) {
             {due.length} due
           </button>
           <button class="chip" onClick={() => setSyncOpen(true)}>Sync</button>
-          <button class={`chip ${music ? 'on' : ''}`} aria-pressed={music} aria-label={music ? 'Stop ambient music' : 'Play ambient music'}
+          <button class={`chip music-chip ${music ? 'on' : ''}`} aria-pressed={music} aria-label={music ? 'Stop ambient music' : 'Play ambient music'}
             title={music ? 'Ambient music on' : 'Ambient music off'}
-            onClick={() => { music ? stopMusic() : startMusic(); setMusic(!music); }}>♪</button>
+            onClick={() => { const on = !isPlaying(); on ? startMusic() : stopMusic(); setMusic(on); }}>♪</button>
           <button class="chip" aria-pressed={!muted} aria-label={muted ? 'Turn sound on' : 'Turn sound off'} title={muted ? 'Sound off' : 'Sound on'}
             onClick={() => { setMuted(!muted); setM(!muted); if (muted) sfx.beep(); }}>{muted ? '🔇' : '🔊'}</button>
         </div>
