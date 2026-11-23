@@ -5,6 +5,7 @@ import {
   type Progress, type Rating, type NodeState, type Want,
 } from '../lib/progress';
 import Sync from './Sync';
+import { sfx, isMuted, setMuted } from '../lib/sfx';
 
 interface Props { maps: MapNode[] }
 interface Entry { node: MapNode; parent?: MapNode; path: MapNode[] }
@@ -42,6 +43,7 @@ export default function App({ maps }: Props) {
   const [selected, setSelected] = useState<string>(focus);
   const [dir, setDir] = useState<'in' | 'out'>('in');
   const [syncOpen, setSyncOpen] = useState(false);
+  const [muted, setM] = useState(() => isMuted());
   const [, tick] = useState(0);
 
   // Keep the URL hash in step with the focused node so the back button zooms out.
@@ -50,7 +52,9 @@ export default function App({ maps }: Props) {
       const id = readHash() || home;
       if (!index.has(id)) return;
       setFocus((prev) => {
-        setDir(depth(id) >= depth(prev) ? 'in' : 'out');
+        const inward = depth(id) >= depth(prev);
+        setDir(inward ? 'in' : 'out');
+        if (id !== prev) inward ? sfx.warpIn() : sfx.warpOut();
         return id;
       });
       setSelected(id);
@@ -83,8 +87,8 @@ export default function App({ maps }: Props) {
   const masteredCount = learnable.filter((e) => mastery(progress, e.node.id) >= MAX).length;
 
   const onPlanet = (n: MapNode) => {
-    if (n.children.length) { setDir('in'); go(n.id); setSelected(n.id); }
-    else setSelected(n.id);
+    if (n.children.length) { sfx.warpIn(); setDir('in'); go(n.id); setSelected(n.id); }
+    else { state(n.id) === 'locked' ? sfx.denied() : sfx.blip(); setSelected(n.id); }
   };
 
   const R = planets.length > 7 ? 340 : 310;
@@ -101,7 +105,7 @@ export default function App({ maps }: Props) {
             <span key={n.id}>
               {i > 0 && <span class="sep">›</span>}
               {i === arr.length - 1 ? <strong>{n.title}</strong> : (
-                <button class="link" onClick={() => { setDir('out'); go(n.id); setSelected(n.id); }}>{n.title}</button>
+                <button class="link" onClick={() => { sfx.warpOut(); setDir('out'); go(n.id); setSelected(n.id); }}>{n.title}</button>
               )}
             </span>
           ))}
@@ -109,10 +113,12 @@ export default function App({ maps }: Props) {
         <div class="bar-right">
           <span class="chip" title="Mastered nodes">★ {masteredCount}/{learnable.length}</span>
           <button class={`chip ${due.length ? 'due' : ''}`} disabled={!due.length}
-            onClick={() => { const e = due[0]; const p = e.parent?.id ?? home; setDir('in'); go(p); setSelected(e.node.id); }}>
+            onClick={() => { const e = due[0]; const p = e.parent?.id ?? home; if (p !== focus) sfx.warpIn(); else sfx.blip(); setDir('in'); go(p); setSelected(e.node.id); }}>
             {due.length} due
           </button>
           <button class="chip" onClick={() => setSyncOpen(true)}>Sync</button>
+          <button class="chip" aria-pressed={!muted} aria-label={muted ? 'Turn sound on' : 'Turn sound off'} title={muted ? 'Sound off' : 'Sound on'}
+            onClick={() => { setMuted(!muted); setM(!muted); if (muted) sfx.beep(); }}>{muted ? '🔇' : '🔊'}</button>
         </div>
       </div>
 
@@ -130,7 +136,7 @@ export default function App({ maps }: Props) {
               return <line key={`l${p.id}`} x1={0} y1={0} x2={x} y2={y} class={`path ${s === 'locked' ? '' : 'lit'} ${s === 'mastered' ? 'gold' : ''}`} />;
             })}
             <g class={`node sun ${focus === '' ? 'universe' : state(focus)} ${selected === focus ? 'sel' : ''}`}
-              onClick={() => setSelected(focus)} role="button" tabIndex={0} aria-label={`${sun.title}, ${focus ? STATE_LABEL[state(focus)] : ''}`}>
+              onClick={() => { sfx.blip(); setSelected(focus); }} role="button" tabIndex={0} aria-label={`${sun.title}, ${focus ? STATE_LABEL[state(focus)] : ''}`}>
               <circle r={150} fill="url(#sunGlow)" class="halo" />
               <circle r={78} class="body" />
               {focus !== '' && <Ring id={focus} r={90} progress={progress} />}
@@ -164,9 +170,18 @@ export default function App({ maps }: Props) {
       </div>
 
       <Detail entry={sel} state={sel.node.id ? state(sel.node.id) : 'unlocked'} progress={progress}
-        onRate={(r) => update(review(progress, sel.node.id, r))}
-        onWant={(w) => update(flag(progress, sel.node.id, w))}
-        onZoom={sel.node.children.length && sel.node.id !== focus ? () => { setDir('in'); go(sel.node.id); setSelected(sel.node.id); } : undefined} />
+        onRate={(r) => {
+          const before = mastery(progress, sel.node.id);
+          const next = review(progress, sel.node.id, r);
+          const after = mastery(next, sel.node.id);
+          if (r === 'forgot') sfx.fail();
+          else if (after >= MAX && before < MAX) sfx.mastered();
+          else if (before < UNLOCK_AT && after >= UNLOCK_AT && sel.node.children.length) sfx.unlock();
+          else sfx.review(after);
+          update(next);
+        }}
+        onWant={(w) => { sfx.beep(); update(flag(progress, sel.node.id, w)); }}
+        onZoom={sel.node.children.length && sel.node.id !== focus ? () => { sfx.warpIn(); setDir('in'); go(sel.node.id); setSelected(sel.node.id); } : undefined} />
 
       {syncOpen && <Sync progress={progress} knownIds={new Set(index.keys())} onClose={() => setSyncOpen(false)} onReplace={update} />}
     </div>
@@ -244,7 +259,7 @@ function Detail({ entry, state, progress, onRate, onWant, onZoom }: {
           <h3>Recall</h3>
           <ol>{node.prompts.map((q) => <li key={q}>{q}</li>)}</ol>
           {!shown ? (
-            <button class="btn primary" onClick={() => setShown(true)}>I've answered from memory → rate it</button>
+            <button class="btn primary" onClick={() => { sfx.blip(); setShown(true); }}>I've answered from memory → rate it</button>
           ) : (
             <div class="rate" role="group" aria-label="How well did you recall it?">
               <button class="btn bad" onClick={() => { setShown(false); onRate('forgot'); }}>Forgot</button>

@@ -14,6 +14,7 @@ Live: https://clarkngo.github.io/orbit/
 - **Spaced repetition:** the next review comes 1 → 3 → 7 → 21 → 60 days out by mastery level.
   The **N due** chip jumps to the next node that's due.
 - **Unlocking:** a node's children unlock once it reaches mastery 2.
+- **Sound:** synthesized sci-fi effects (warp in and out, sonar blips, unlock chirps, a star chord on mastery). Use the 🔊 chip to mute.
 
 ## Progress and sync
 

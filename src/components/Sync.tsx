@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { sfx } from '../lib/sfx';
 import { fromCode, merge, normalize, toCode, empty, type Progress } from '../lib/progress';
 
 interface Props {
@@ -27,9 +28,10 @@ export default function Sync({ progress, knownIds, onClose, onReplace }: Props) 
     const n = Object.keys(incoming.nodes).length;
     const merged = merge(progress, incoming);
     onReplace(merged);
+    sfx.beep();
     setMsg({ ok: true, text: `Merged ${n} node${n === 1 ? "" : "s"} from ${source}. Newer reviews win.` });
   };
-  const fail = (e: unknown) => setMsg({ ok: false, text: e instanceof Error ? e.message : String(e) });
+  const fail = (e: unknown) => (sfx.error(), setMsg({ ok: false, text: e instanceof Error ? e.message : String(e) }));
 
   const exportFile = () => {
     const blob = new Blob([JSON.stringify(progress, null, 2) + '\n'], { type: 'application/json' });
