@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { MapNode } from '../lib/types';
 import {
-  load, save, review, stateOf, mastery, isDue, MAX, UNLOCK_AT,
-  type Progress, type Rating, type NodeState,
+  load, save, review, flag, stateOf, mastery, isDue, MAX, UNLOCK_AT,
+  type Progress, type Rating, type NodeState, type Want,
 } from '../lib/progress';
 import Sync from './Sync';
 
@@ -151,6 +151,7 @@ export default function App({ maps }: Props) {
                   })}
                   <circle r={44} class="body" filter={s === 'mastered' ? 'url(#glow)' : undefined} />
                   <Ring id={p.id} r={52} progress={progress} />
+                  {progress.nodes[p.id]?.want && <text class="flag" x={34} y={-30} text-anchor="middle">{progress.nodes[p.id]?.want === 'depth' ? '↓' : '↔'}</text>}
                   {s === 'locked' && <text class="lock" y={9} text-anchor="middle">🔒</text>}
                   {s !== 'locked' && <text class="lvl" y={10} text-anchor="middle">{mastery(progress, p.id)}</text>}
                   <Label text={p.title} y={y > 150 ? -108 : 86} size={24} max={16} cls="planet-label" />
@@ -164,6 +165,7 @@ export default function App({ maps }: Props) {
 
       <Detail entry={sel} state={sel.node.id ? state(sel.node.id) : 'unlocked'} progress={progress}
         onRate={(r) => update(review(progress, sel.node.id, r))}
+        onWant={(w) => update(flag(progress, sel.node.id, w))}
         onZoom={sel.node.children.length && sel.node.id !== focus ? () => { setDir('in'); go(sel.node.id); setSelected(sel.node.id); } : undefined} />
 
       {syncOpen && <Sync progress={progress} knownIds={new Set(index.keys())} onClose={() => setSyncOpen(false)} onReplace={update} />}
@@ -205,8 +207,8 @@ function Legend() {
   );
 }
 
-function Detail({ entry, state, progress, onRate, onZoom }: {
-  entry: Entry; state: NodeState; progress: Progress; onRate: (r: Rating) => void; onZoom?: () => void;
+function Detail({ entry, state, progress, onRate, onWant, onZoom }: {
+  entry: Entry; state: NodeState; progress: Progress; onRate: (r: Rating) => void; onWant: (w: Want) => void; onZoom?: () => void;
 }) {
   const { node, parent } = entry;
   const [shown, setShown] = useState(false);
@@ -251,6 +253,16 @@ function Detail({ entry, state, progress, onRate, onZoom }: {
               <button class="btn good" onClick={() => { setShown(false); onRate('easy'); }}>Easy</button>
             </div>
           )}
+        </div>
+      )}
+      {state !== 'locked' && (
+        <div class="want">
+          <h3>Next time Claude grows the map</h3>
+          <div class="row" role="group" aria-label="Ask for more here">
+            <button class={`btn ${np?.want === 'depth' ? 'on' : ''}`} aria-pressed={np?.want === 'depth'} onClick={() => onWant('depth')}>↓ More depth</button>
+            <button class={`btn ${np?.want === 'breadth' ? 'on' : ''}`} aria-pressed={np?.want === 'breadth'} onClick={() => onWant('breadth')}>↔ More breadth</button>
+          </div>
+          <p class="muted small">Depth: go deeper under this node. Breadth: add sibling topics next to it. Saved with your progress export.</p>
         </div>
       )}
       {onZoom && <button class="btn ghost" onClick={onZoom}>Fly into {node.title} →</button>}

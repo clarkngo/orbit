@@ -30,8 +30,9 @@ Imports merge per node, and the most recent review wins.
 
 1. In Orbit, go to **Sync → Download progress.json**.
 2. Save it as `progress/progress.json` in this repo.
+   Before exporting, you can flag any node **↓ More depth** or **↔ More breadth** in its panel; flags travel in the file.
 3. Ask Claude Code: **"read my progress and expand the map"**.
-4. Claude adds new child nodes under branches you've mastered (mastery ≥ 4) in `src/data/maps/*.json`,
+4. Claude adds new child nodes under flagged nodes first, then branches you've mastered (mastery ≥ 4) in `src/data/maps/*.json`,
    keeps every existing id unchanged, runs `npm run build` to validate, and commits.
 
 ## Maps

@@ -170,3 +170,6 @@ button { font: inherit; color: inherit; }
   .planet-label { font-size: 34px; stroke-width: 8px; }
   .sun-label { font-size: 32px; paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
 }
+
+.want .btn.on { border-color: var(--sun); color: var(--sun); background: color-mix(in srgb, var(--sun) 14%, var(--surface-2)); }
+.node .flag { fill: var(--sun); font: 700 26px var(--mono); }

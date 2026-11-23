@@ -16,7 +16,12 @@ export interface NodeProgress {
   lastReview?: string;  // ISO date
   reviews: number;
   lapses: number;
+  /** What the learner wants Claude to add here next. */
+  want?: Want;
+  /** Last time anything on this node changed (review or flag). Used when merging. */
+  touched?: string;
 }
+export type Want = 'depth' | 'breadth';
 export interface Progress {
   version: number;
   updatedAt: string;
@@ -56,17 +61,21 @@ export function normalize(data: unknown): Progress {
       lastReview: typeof n.lastReview === 'string' ? n.lastReview : undefined,
       reviews: Number(n.reviews) || 0,
       lapses: Number(n.lapses) || 0,
+      want: n.want === 'depth' || n.want === 'breadth' ? n.want : undefined,
+      touched: typeof n.touched === 'string' ? n.touched : undefined,
     };
   }
   return { version: VERSION, updatedAt: typeof d.updatedAt === 'string' ? d.updatedAt : new Date().toISOString(), nodes };
 }
+
+const stamp = (n: NodeProgress) => n.touched ?? n.lastReview ?? '';
 
 /** Merge two devices' progress: per node, the most recently reviewed copy wins. */
 export function merge(a: Progress, b: Progress): Progress {
   const nodes = { ...a.nodes };
   for (const [id, n] of Object.entries(b.nodes)) {
     const cur = nodes[id];
-    if (!cur || (n.lastReview ?? '') > (cur.lastReview ?? '')) nodes[id] = n;
+    if (!cur || stamp(n) > stamp(cur)) nodes[id] = n;
   }
   return { version: VERSION, updatedAt: new Date().toISOString(), nodes };
 }
@@ -85,8 +94,16 @@ export function review(p: Progress, id: string, rating: Rating, now = new Date()
     nextReview: new Date(now.getTime() + days * DAY).toISOString(),
     reviews: cur.reviews + 1,
     lapses: cur.lapses + (rating === 'forgot' ? 1 : 0),
+    want: cur.want,
+    touched: now.toISOString(),
   };
   return { ...p, nodes: { ...p.nodes, [id]: next } };
+}
+
+/** Toggle a depth/breadth request on a node; the same value again clears it. */
+export function flag(p: Progress, id: string, want: Want): Progress {
+  const cur = p.nodes[id] ?? { mastery: 0, reviews: 0, lapses: 0 };
+  return { ...p, nodes: { ...p.nodes, [id]: { ...cur, want: cur.want === want ? undefined : want, touched: new Date().toISOString() } } };
 }
 
 export const mastery = (p: Progress, id: string) => p.nodes[id]?.mastery ?? 0;

@@ -20,7 +20,10 @@ Ids must be globally unique and must start with their parent's id. `npm run buil
 
 ## Workflow: "read my progress and expand the map"
 
-1. Read `progress/progress.json` (`{ version, updatedAt, nodes: { [id]: { mastery 0–5, nextReview, lastReview, reviews, lapses } } }`).
+1. Read `progress/progress.json` (`{ version, updatedAt, nodes: { [id]: { mastery 0–5, nextReview, lastReview, reviews, lapses, want?, touched } } }`).
+   `want` is the learner's explicit request: `"depth"` = add children under that node (even if not yet mastered);
+   `"breadth"` = add siblings next to it (children of its parent). Flagged nodes come first; clear nothing yourself,
+   the user unflags in the app.
 2. Find branches the user has mastered (mastery ≥ 4), especially leaves with no children yet.
    Note weak spots too (lapses, low mastery) and don't expand those.
 3. Add 2–5 child nodes under each, going deeper or more applied, with good recall prompts and 0–2 reputable resources.
