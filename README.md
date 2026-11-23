@@ -9,7 +9,12 @@ Live: https://clarkngo.github.io/orbit/
 ## How it works
 
 - **Node states:** locked (dim), unlocked, in progress, mastered (gold glow), and due for review (pulsing orange).
-- **Mastery 0–5:** open a node, answer its recall prompts from memory, then rate yourself:
+- **Answer cards:** every node has a one-line intuition hook (an analogy) and 2–3 question/answer cards.
+  - *New node:* study the hook and the cards, then test yourself right away.
+  - *Review:* the cards come in a random order with the answers and hook hidden. You type or say an answer, reveal it, and compare.
+    At the end you see the hook and write the idea in your own words; that note comes back on later reviews.
+  - This uses retrieval practice, generation, elaboration, spacing and varied order, the techniques with the strongest evidence for long-term memory.
+- **Mastery 0–5:** after the cards, rate yourself:
   Forgot (−2, back to 1 day), Hard (same level, half interval), Good (+1), Easy (+2).
 - **Spaced repetition:** the next review comes 1 → 3 → 7 → 21 → 60 days out by mastery level.
   The **N due** chip jumps to the next node that's due.

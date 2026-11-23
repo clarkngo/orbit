@@ -173,3 +173,22 @@ button { font: inherit; color: inherit; }
 
 .want .btn.on { border-color: var(--sun); color: var(--sun); background: color-mix(in srgb, var(--sun) 14%, var(--surface-2)); }
 .node .flag { fill: var(--sun); font: 700 26px var(--mono); }
+
+/* ---------- review cards ---------- */
+.recall { margin-top: 12px; display: grid; gap: 10px; }
+.recall .eyebrow { margin: 0; }
+.hook { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--sun) 12%, var(--surface-2)); border-left: 3px solid var(--sun); }
+.hook p { margin: 0; font-style: italic; }
+.q { margin: 0; font-weight: 600; font-size: 1.05rem; }
+.recall textarea { width: 100%; font: inherit; font-size: .95rem; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; resize: vertical; }
+.recall textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.answer, .yours { padding: 8px 12px; border-radius: 8px; background: var(--surface-2); }
+.answer { border-left: 3px solid var(--accent); }
+.answer p, .yours p { margin: 2px 0 0; white-space: pre-wrap; }
+.study { padding-left: 20px; margin: 0; }
+.study li { margin: 0 0 10px; }
+.study p { margin: 2px 0 0; color: var(--muted); }
+.note { display: grid; gap: 6px; font-size: .9rem; }
+.rate .btn { display: grid; gap: 2px; line-height: 1.2; }
+.rate .btn small { font-size: .68rem; color: var(--muted); font-weight: 400; }
+@media (max-width: 420px) { .rate { grid-template-columns: repeat(2, 1fr); } }

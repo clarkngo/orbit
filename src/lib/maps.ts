@@ -10,7 +10,8 @@ const nodeSchema: z.ZodType<MapNode, z.ZodTypeDef, unknown> = z.lazy(() =>
     title: z.string().min(1),
     summary: z.string().min(10).max(240),
     resources: z.array(z.object({ title: z.string().min(1), url: z.string().url() })).optional(),
-    prompts: z.array(z.string().min(5)).min(1),
+    hook: z.string().min(10).max(200),
+    cards: z.array(z.object({ q: z.string().min(5), a: z.string().min(1).max(400) })).min(1),
     children: z.array(nodeSchema).default([]),
   }),
 );

@@ -2,33 +2,54 @@
   "id": "dsa",
   "title": "Data Structures & Algorithms",
   "summary": "Organizing data and stepping through it efficiently, measured with Big-O.",
-  "prompts": [
-    "Why do we measure algorithms with Big-O instead of seconds?",
-    "Name five core data structures."
+  "hook": "Pick the container that makes your most common question cheap.",
+  "cards": [
+    {
+      "q": "Why do we measure algorithms with Big-O instead of seconds?",
+      "a": "It describes growth with input size, independent of hardware."
+    },
+    {
+      "q": "Name five core data structures.",
+      "a": "Array, linked list, hash table, tree, graph (plus stack, queue, heap)."
+    }
   ],
   "children": [
     {
       "id": "dsa.complexity",
       "title": "Complexity",
       "summary": "Big-O time and space, best/worst/amortized cases.",
+      "hook": "How does the work grow if the input doubles?",
       "resources": [
         {
           "title": "Big-O Cheat Sheet",
           "url": "https://www.bigocheatsheet.com/"
         }
       ],
-      "prompts": [
-        "Order these: O(n log n), O(1), O(n²), O(log n), O(n).",
-        "What does amortized O(1) mean?"
+      "cards": [
+        {
+          "q": "Order these: O(n log n), O(1), O(n²), O(log n), O(n).",
+          "a": "O(1) < O(log n) < O(n) < O(n log n) < O(n²)."
+        },
+        {
+          "q": "What does amortized O(1) mean?",
+          "a": "Occasional expensive ops average out to constant cost per op over a sequence."
+        }
       ],
       "children": [
         {
           "id": "dsa.complexity.big-o",
           "title": "Big-O Notation",
           "summary": "Upper-bound growth rate as input size goes to infinity; constants drop.",
-          "prompts": [
-            "Why do we drop constants?",
-            "Big-O of two nested loops over n?"
+          "hook": "Big-O is the shape of the curve, not the speed of the car.",
+          "cards": [
+            {
+              "q": "Why do we drop constants?",
+              "a": "For large n, the growth shape dominates; constants depend on hardware anyway."
+            },
+            {
+              "q": "Big-O of two nested loops over n?",
+              "a": "O(n²)."
+            }
           ],
           "children": []
         },
@@ -36,9 +57,16 @@
           "id": "dsa.complexity.amortized",
           "title": "Amortized Analysis",
           "summary": "Averaging occasional expensive operations over many cheap ones, like dynamic array growth.",
-          "prompts": [
-            "Why is appending to a dynamic array amortized O(1)?",
-            "What growth factor makes that work?"
+          "hook": "Moving to a house twice as big: rare and painful, but cheap per year lived there.",
+          "cards": [
+            {
+              "q": "Why is appending to a dynamic array amortized O(1)?",
+              "a": "Copying happens rarely; with doubling, total copy work is about 2n for n appends."
+            },
+            {
+              "q": "What growth factor makes that work?",
+              "a": "Any constant factor > 1, typically 1.5 or 2."
+            }
           ],
           "children": []
         },
@@ -46,9 +74,16 @@
           "id": "dsa.complexity.recursion",
           "title": "Recursion & Master Theorem",
           "summary": "Recurrences like T(n) = 2T(n/2) + n and how to solve them.",
-          "prompts": [
-            "Solve T(n) = 2T(n/2) + n.",
-            "What is the space cost of recursion?"
+          "hook": "Split the work, solve the halves, pay to combine: count the work per level × levels.",
+          "cards": [
+            {
+              "q": "Solve T(n) = 2T(n/2) + n.",
+              "a": "O(n log n): n work per level, log n levels."
+            },
+            {
+              "q": "What is the space cost of recursion?",
+              "a": "O(depth) call-stack frames."
+            }
           ],
           "children": []
         }
@@ -58,18 +93,32 @@
       "id": "dsa.linear",
       "title": "Linear Structures",
       "summary": "Arrays, linked lists, stacks, queues and hash tables.",
-      "prompts": [
-        "Array vs linked list: tradeoffs?",
-        "Which structure gives O(1) average lookup by key?"
+      "hook": "Lined-up items: by position, by link, by last-in, first-in, or by key.",
+      "cards": [
+        {
+          "q": "Array vs linked list: tradeoffs?",
+          "a": "Array: O(1) index, slow middle inserts. Linked list: O(1) insert at a node, O(n) access."
+        },
+        {
+          "q": "Which structure gives O(1) average lookup by key?",
+          "a": "A hash table."
+        }
       ],
       "children": [
         {
           "id": "dsa.linear.arrays",
           "title": "Arrays & Strings",
           "summary": "Contiguous memory, O(1) index access, O(n) inserts in the middle.",
-          "prompts": [
-            "Why is array access O(1)?",
-            "Cost of inserting at index 0?"
+          "hook": "Numbered lockers in a row: jump straight to locker 57.",
+          "cards": [
+            {
+              "q": "Why is array access O(1)?",
+              "a": "Address = base + index × size, a single computation."
+            },
+            {
+              "q": "Cost of inserting at index 0?",
+              "a": "O(n): every element shifts right."
+            }
           ],
           "children": []
         },
@@ -77,9 +126,16 @@
           "id": "dsa.linear.linked-lists",
           "title": "Linked Lists",
           "summary": "Nodes with next pointers; O(1) insert at a known node, O(n) search.",
-          "prompts": [
-            "Reverse a linked list: describe the pointer moves.",
-            "How do you detect a cycle?"
+          "hook": "A treasure hunt: each clue points to the next.",
+          "cards": [
+            {
+              "q": "Reverse a linked list: describe the pointer moves.",
+              "a": "Walk with prev, cur: save next, point cur.next to prev, advance prev and cur."
+            },
+            {
+              "q": "How do you detect a cycle?",
+              "a": "Floyd's tortoise and hare: a fast and a slow pointer meet if there's a cycle."
+            }
           ],
           "children": []
         },
@@ -87,9 +143,16 @@
           "id": "dsa.linear.stacks-queues",
           "title": "Stacks & Queues",
           "summary": "LIFO and FIFO; deques and monotonic stacks build on them.",
-          "prompts": [
-            "Name a problem solved with a stack.",
-            "Implement a queue with two stacks: how?"
+          "hook": "Stack of plates vs line at a coffee shop.",
+          "cards": [
+            {
+              "q": "Name a problem solved with a stack.",
+              "a": "Balanced parentheses, undo, or next-greater-element (monotonic stack)."
+            },
+            {
+              "q": "Implement a queue with two stacks: how?",
+              "a": "Push to an in-stack; to dequeue, if the out-stack is empty move everything over, then pop from out."
+            }
           ],
           "children": []
         },
@@ -97,9 +160,16 @@
           "id": "dsa.linear.hashing",
           "title": "Hash Tables",
           "summary": "Hash keys to buckets for O(1) average get/put; handle collisions by chaining or probing.",
-          "prompts": [
-            "Chaining vs open addressing?",
-            "Why does load factor matter?"
+          "hook": "Coat check by ticket number: the number tells you exactly which hook.",
+          "cards": [
+            {
+              "q": "Chaining vs open addressing?",
+              "a": "Chaining keeps a list per bucket; open addressing probes for the next free slot."
+            },
+            {
+              "q": "Why does load factor matter?",
+              "a": "Higher load means more collisions and slower ops; tables resize to keep it low."
+            }
           ],
           "children": []
         }
@@ -109,18 +179,32 @@
       "id": "dsa.trees",
       "title": "Trees & Heaps",
       "summary": "Hierarchical structures for ordered data and priorities.",
-      "prompts": [
-        "Define height and depth of a tree.",
-        "Why do balanced trees matter?"
+      "hook": "A family tree: one root, branching down, no loops.",
+      "cards": [
+        {
+          "q": "Define height and depth of a tree.",
+          "a": "Depth: edges from root to a node. Height: longest path from a node down to a leaf."
+        },
+        {
+          "q": "Why do balanced trees matter?",
+          "a": "They keep height O(log n), so operations stay O(log n)."
+        }
       ],
       "children": [
         {
           "id": "dsa.trees.traversal",
           "title": "Tree Traversals",
           "summary": "Pre-, in-, post-order DFS and level-order BFS.",
-          "prompts": [
-            "Which traversal gives sorted order on a BST?",
-            "Iterative in-order: what do you keep on the stack?"
+          "hook": "Pre: visit, then kids. In: left, me, right. Post: kids first. Level: floor by floor.",
+          "cards": [
+            {
+              "q": "Which traversal gives sorted order on a BST?",
+              "a": "In-order."
+            },
+            {
+              "q": "Iterative in-order: what do you keep on the stack?",
+              "a": "The path of ancestors whose left subtrees you're still exploring; go left until null, pop, visit, go right."
+            }
           ],
           "children": []
         },
@@ -128,9 +212,16 @@
           "id": "dsa.trees.bst",
           "title": "Binary Search Trees",
           "summary": "Left < node < right; O(log n) operations when balanced (AVL, red-black).",
-          "prompts": [
-            "How do you delete a node with two children?",
-            "What makes a BST degrade to O(n)?"
+          "hook": "A guessing game: higher or lower at every node.",
+          "cards": [
+            {
+              "q": "How do you delete a node with two children?",
+              "a": "Replace it with its in-order successor (smallest in the right subtree), then delete the successor."
+            },
+            {
+              "q": "What makes a BST degrade to O(n)?",
+              "a": "Inserting sorted data makes it a linked list."
+            }
           ],
           "children": []
         },
@@ -138,9 +229,16 @@
           "id": "dsa.trees.heaps",
           "title": "Heaps & Priority Queues",
           "summary": "Array-backed complete trees with O(log n) push/pop and O(1) peek.",
-          "prompts": [
-            "How do you find the k largest items with a heap?",
-            "Why is heapify O(n)?"
+          "hook": "A tournament bracket: the champion is always on top.",
+          "cards": [
+            {
+              "q": "How do you find the k largest items with a heap?",
+              "a": "Keep a min-heap of size k; push each item and pop when size exceeds k; the heap holds the k largest."
+            },
+            {
+              "q": "Why is heapify O(n)?",
+              "a": "Most nodes are near the bottom and sift down only a little; the sum converges to O(n)."
+            }
           ],
           "children": []
         },
@@ -148,9 +246,16 @@
           "id": "dsa.trees.tries",
           "title": "Tries",
           "summary": "Prefix trees for fast word and prefix lookups.",
-          "prompts": [
-            "What is the cost of inserting a word of length L?",
-            "Name two problems tries are good for."
+          "hook": "Autocomplete as a tree of letters.",
+          "cards": [
+            {
+              "q": "What is the cost of inserting a word of length L?",
+              "a": "O(L)."
+            },
+            {
+              "q": "Name two problems tries are good for.",
+              "a": "Autocomplete/prefix search and word games like Boggle or word search."
+            }
           ],
           "children": []
         }
@@ -160,18 +265,32 @@
       "id": "dsa.graphs",
       "title": "Graphs",
       "summary": "Nodes and edges: modeling networks, dependencies and maps.",
-      "prompts": [
-        "Adjacency list vs matrix?",
-        "Directed vs undirected, weighted vs unweighted?"
+      "hook": "Cities and roads: anything connected is a graph.",
+      "cards": [
+        {
+          "q": "Adjacency list vs matrix?",
+          "a": "List is compact for sparse graphs; matrix gives O(1) edge checks but O(V²) space."
+        },
+        {
+          "q": "Directed vs undirected, weighted vs unweighted?",
+          "a": "Directed edges have a direction (follows); weighted edges have costs (distances)."
+        }
       ],
       "children": [
         {
           "id": "dsa.graphs.bfs-dfs",
           "title": "BFS & DFS",
           "summary": "Breadth-first finds shortest paths in unweighted graphs; depth-first explores fully.",
-          "prompts": [
-            "Why does BFS give shortest paths in unweighted graphs?",
-            "How do you avoid revisiting nodes?"
+          "hook": "BFS: ripples in a pond. DFS: a maze runner who goes deep, then backtracks.",
+          "cards": [
+            {
+              "q": "Why does BFS give shortest paths in unweighted graphs?",
+              "a": "It explores in order of distance, so the first time it reaches a node is via the fewest edges."
+            },
+            {
+              "q": "How do you avoid revisiting nodes?",
+              "a": "Keep a visited set and mark nodes when you enqueue/push them."
+            }
           ],
           "children": []
         },
@@ -179,9 +298,16 @@
           "id": "dsa.graphs.shortest-paths",
           "title": "Shortest Paths",
           "summary": "Dijkstra for non-negative weights, Bellman-Ford with negatives.",
-          "prompts": [
-            "Why does Dijkstra fail with negative edges?",
-            "Dijkstra's complexity with a heap?"
+          "hook": "Always expand the closest unsettled city next.",
+          "cards": [
+            {
+              "q": "Why does Dijkstra fail with negative edges?",
+              "a": "It finalizes a node assuming no later path can be cheaper; a negative edge breaks that."
+            },
+            {
+              "q": "Dijkstra's complexity with a heap?",
+              "a": "O((V + E) log V)."
+            }
           ],
           "children": []
         },
@@ -189,9 +315,16 @@
           "id": "dsa.graphs.topo-sort",
           "title": "Topological Sort",
           "summary": "Order a DAG so every edge points forward (Kahn's algorithm or DFS).",
-          "prompts": [
-            "Describe Kahn's algorithm.",
-            "How does it detect a cycle?"
+          "hook": "Getting dressed: socks before shoes.",
+          "cards": [
+            {
+              "q": "Describe Kahn's algorithm.",
+              "a": "Queue all nodes with in-degree 0; pop one, output it, decrement neighbors' in-degree, enqueue any that hit 0."
+            },
+            {
+              "q": "How does it detect a cycle?",
+              "a": "If fewer than V nodes are output, the rest are in a cycle."
+            }
           ],
           "children": []
         },
@@ -199,9 +332,16 @@
           "id": "dsa.graphs.union-find",
           "title": "Union-Find",
           "summary": "Disjoint sets with path compression and union by rank, near O(1) per op.",
-          "prompts": [
-            "What do path compression and union by rank each do?",
-            "Name a problem union-find solves."
+          "hook": "Everyone points to their group's leader; merge by pointing one leader at another.",
+          "cards": [
+            {
+              "q": "What do path compression and union by rank each do?",
+              "a": "Path compression flattens the tree on finds; union by rank attaches the shorter tree under the taller."
+            },
+            {
+              "q": "Name a problem union-find solves.",
+              "a": "Counting connected components, or detecting cycles in Kruskal's MST."
+            }
           ],
           "children": []
         }
@@ -211,18 +351,32 @@
       "id": "dsa.techniques",
       "title": "Techniques",
       "summary": "Reusable problem-solving patterns that turn brute force into efficient solutions.",
-      "prompts": [
-        "What's the first pattern you check when input is sorted?",
-        "How do you spot a DP problem?"
+      "hook": "Recognize the shape of the problem, then reach for the matching tool.",
+      "cards": [
+        {
+          "q": "What's the first pattern you check when input is sorted?",
+          "a": "Two pointers or binary search."
+        },
+        {
+          "q": "How do you spot a DP problem?",
+          "a": "Choices that overlap: the same subproblem gets recomputed, and the best answer builds from best sub-answers."
+        }
       ],
       "children": [
         {
           "id": "dsa.techniques.two-pointers",
           "title": "Two Pointers & Sliding Window",
           "summary": "Move two indices through a sequence to avoid nested loops.",
-          "prompts": [
-            "When does a sliding window apply?",
-            "Two-sum on a sorted array: how?"
+          "hook": "A caterpillar: the front stretches, the back catches up.",
+          "cards": [
+            {
+              "q": "When does a sliding window apply?",
+              "a": "Contiguous subarray/substring problems where expanding and shrinking keeps a running condition."
+            },
+            {
+              "q": "Two-sum on a sorted array: how?",
+              "a": "Left at start, right at end; sum too small → move left up, too big → move right down."
+            }
           ],
           "children": []
         },
@@ -230,9 +384,16 @@
           "id": "dsa.techniques.binary-search",
           "title": "Binary Search",
           "summary": "Halve the search space each step, including searching over the answer.",
-          "prompts": [
-            "What is the loop invariant?",
-            "What does 'binary search on the answer' mean?"
+          "hook": "Guess a number 1–100 in seven tries.",
+          "cards": [
+            {
+              "q": "What is the loop invariant?",
+              "a": "The answer, if it exists, is always within [lo, hi]."
+            },
+            {
+              "q": "What does 'binary search on the answer' mean?",
+              "a": "Search over possible answer values when you can test 'is x feasible?' and feasibility is monotonic."
+            }
           ],
           "children": []
         },
@@ -240,9 +401,16 @@
           "id": "dsa.techniques.dp",
           "title": "Dynamic Programming",
           "summary": "Overlapping subproblems plus optimal substructure: memoize or build bottom-up.",
-          "prompts": [
-            "Memoization vs tabulation?",
-            "Define the state and transition for climbing stairs."
+          "hook": "Write down answers to subproblems so you never solve the same one twice.",
+          "cards": [
+            {
+              "q": "Memoization vs tabulation?",
+              "a": "Memoization: top-down recursion with a cache. Tabulation: bottom-up filling a table."
+            },
+            {
+              "q": "Define the state and transition for climbing stairs.",
+              "a": "dp[i] = ways to reach step i; dp[i] = dp[i-1] + dp[i-2]."
+            }
           ],
           "children": []
         },
@@ -250,9 +418,16 @@
           "id": "dsa.techniques.backtracking",
           "title": "Backtracking",
           "summary": "Build candidates step by step and undo choices that can't lead to a solution.",
-          "prompts": [
-            "Sketch the backtracking template.",
-            "How does pruning help?"
+          "hook": "Exploring a maze with chalk: mark, try, erase if it's a dead end.",
+          "cards": [
+            {
+              "q": "Sketch the backtracking template.",
+              "a": "choose → recurse → unchoose, with a base case that records a solution."
+            },
+            {
+              "q": "How does pruning help?",
+              "a": "It cuts branches that can't succeed early, saving exponential work."
+            }
           ],
           "children": []
         },
@@ -260,9 +435,16 @@
           "id": "dsa.techniques.greedy",
           "title": "Greedy",
           "summary": "Take the locally best choice when it provably leads to a global optimum.",
-          "prompts": [
-            "Give a problem where greedy works and one where it fails.",
-            "How do you justify a greedy choice?"
+          "hook": "Grab the best thing in front of you, when you can prove you'll never regret it.",
+          "cards": [
+            {
+              "q": "Give a problem where greedy works and one where it fails.",
+              "a": "Works: interval scheduling by earliest end. Fails: coin change with coins {1, 3, 4} for 6."
+            },
+            {
+              "q": "How do you justify a greedy choice?",
+              "a": "An exchange argument: swapping any optimal solution's choice for the greedy one doesn't make it worse."
+            }
           ],
           "children": []
         }
@@ -272,18 +454,32 @@
       "id": "dsa.sorting",
       "title": "Sorting",
       "summary": "Ordering data: comparison sorts and their limits, plus linear-time special cases.",
-      "prompts": [
-        "Why can't comparison sorts beat O(n log n)?",
-        "What does stable mean?"
+      "hook": "Comparisons can only shrink possibilities so fast.",
+      "cards": [
+        {
+          "q": "Why can't comparison sorts beat O(n log n)?",
+          "a": "There are n! orderings and each comparison halves them at best: log₂(n!) ≈ n log n."
+        },
+        {
+          "q": "What does stable mean?",
+          "a": "Equal elements keep their original relative order."
+        }
       ],
       "children": [
         {
           "id": "dsa.sorting.merge-quick",
           "title": "Merge & Quick Sort",
           "summary": "Divide and conquer: merge is stable O(n log n); quick is in-place with O(n²) worst case.",
-          "prompts": [
-            "Why pick a random pivot?",
-            "Space cost of merge sort?"
+          "hook": "Merge: split and zip. Quick: pick a pivot, throw smaller left, bigger right.",
+          "cards": [
+            {
+              "q": "Why pick a random pivot?",
+              "a": "To make the O(n²) worst case (sorted input with a fixed pivot) vanishingly unlikely."
+            },
+            {
+              "q": "Space cost of merge sort?",
+              "a": "O(n) extra space for merging."
+            }
           ],
           "children": []
         },
@@ -291,9 +487,16 @@
           "id": "dsa.sorting.linear",
           "title": "Counting & Radix Sort",
           "summary": "Beat O(n log n) when keys are small integers or fixed-width.",
-          "prompts": [
-            "When does counting sort win?",
-            "Why does radix sort need a stable inner sort?"
+          "hook": "Sorting mail into labeled cubbies instead of comparing letters.",
+          "cards": [
+            {
+              "q": "When does counting sort win?",
+              "a": "When the key range k is small relative to n: O(n + k)."
+            },
+            {
+              "q": "Why does radix sort need a stable inner sort?",
+              "a": "Each digit pass must preserve the order from earlier passes."
+            }
           ],
           "children": []
         }

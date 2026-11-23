@@ -2,47 +2,106 @@
   "id": "ai",
   "title": "Artificial Intelligence",
   "summary": "Systems that learn patterns from data to predict, generate and act.",
-  "prompts": [
-    "In one sentence, how does machine learning differ from hand-written rules?",
-    "Name the three big learning paradigms."
+  "hook": "Rules are a recipe you write; ML is tasting thousands of dishes and inferring the recipe.",
+  "cards": [
+    {
+      "q": "In one sentence, how does machine learning differ from hand-written rules?",
+      "a": "Rules are written by hand; ML infers the rules from examples by minimizing error on data."
+    },
+    {
+      "q": "Name the three big learning paradigms.",
+      "a": "Supervised (labeled examples), unsupervised (find structure without labels), reinforcement (learn from reward by acting)."
+    }
   ],
   "children": [
     {
       "id": "ai.foundations",
       "title": "ML Foundations",
       "summary": "Data, models, loss and optimization: the loop under every learned system.",
-      "prompts": [
-        "What are the four ingredients of a supervised learning setup?",
-        "Why do we hold out a test set?"
+      "hook": "Every ML system is the same loop: guess, measure how wrong, nudge, repeat.",
+      "cards": [
+        {
+          "q": "What are the four ingredients of a supervised learning setup?",
+          "a": "Data, a model (parameterized function), a loss function, and an optimizer."
+        },
+        {
+          "q": "Why do we hold out a test set?",
+          "a": "To estimate performance on unseen data; scoring on training data rewards memorization."
+        }
       ],
       "children": [
         {
           "id": "ai.foundations.supervised",
           "title": "Supervised Learning",
           "summary": "Learn a mapping from inputs to labeled outputs: regression and classification.",
-          "prompts": ["Give one regression and one classification example.", "What is a label?"],
+          "hook": "A student with an answer key: practice problems plus the right answers.",
+          "cards": [
+            {
+              "q": "Give one regression and one classification example.",
+              "a": "Regression: predict house price. Classification: spam or not spam."
+            },
+            {
+              "q": "What is a label?",
+              "a": "The correct output paired with an input, the 'answer' the model learns to predict."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.foundations.loss",
           "title": "Loss Functions",
           "summary": "A number that says how wrong the model is; training makes it smaller.",
-          "prompts": ["When would you use cross-entropy instead of mean squared error?", "What does the loss surface look like conceptually?"],
+          "hook": "Loss is the golf score: lower is better, and training is practicing to shave strokes.",
+          "cards": [
+            {
+              "q": "When would you use cross-entropy instead of mean squared error?",
+              "a": "Classification with probabilities: cross-entropy punishes confident wrong answers hard; MSE suits continuous targets."
+            },
+            {
+              "q": "What does the loss surface look like conceptually?",
+              "a": "A landscape over parameter space where height is error; training walks downhill."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.foundations.gradient-descent",
           "title": "Gradient Descent",
           "summary": "Step parameters opposite the gradient of the loss, scaled by a learning rate.",
-          "resources": [{ "title": "3Blue1Brown: Gradient descent", "url": "https://www.3blue1brown.com/lessons/gradient-descent" }],
-          "prompts": ["What happens if the learning rate is too large?", "Why is it called stochastic gradient descent when we use mini-batches?"],
+          "hook": "Walking down a foggy mountain by feeling which way the ground slopes under your feet.",
+          "resources": [
+            {
+              "title": "3Blue1Brown: Gradient descent",
+              "url": "https://www.3blue1brown.com/lessons/gradient-descent"
+            }
+          ],
+          "cards": [
+            {
+              "q": "What happens if the learning rate is too large?",
+              "a": "It overshoots the valley, bouncing around or diverging instead of settling."
+            },
+            {
+              "q": "Why is it called stochastic gradient descent when we use mini-batches?",
+              "a": "Each step uses a random small batch, so the gradient is a noisy (stochastic) estimate of the true one."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.foundations.generalization",
           "title": "Overfitting & Generalization",
           "summary": "Doing well on unseen data, not just memorizing the training set.",
-          "prompts": ["Name two signs of overfitting.", "Name three ways to reduce it."],
+          "hook": "Memorizing last year's exam answers vs understanding the subject.",
+          "cards": [
+            {
+              "q": "Name two signs of overfitting.",
+              "a": "Training loss keeps dropping while validation loss rises; huge gap between train and test accuracy."
+            },
+            {
+              "q": "Name three ways to reduce it.",
+              "a": "More data, regularization (weight decay, dropout), early stopping, simpler model, data augmentation."
+            }
+          ],
           "children": []
         }
       ]
@@ -51,35 +110,90 @@
       "id": "ai.neural-nets",
       "title": "Neural Networks",
       "summary": "Stacks of linear layers and nonlinearities trained end to end with backpropagation.",
-      "prompts": ["Why does a network need nonlinear activations?", "What is a layer, concretely?"],
+      "hook": "Lego: simple identical bricks (linear + bend) stacked deep enough build any shape.",
+      "cards": [
+        {
+          "q": "Why does a network need nonlinear activations?",
+          "a": "Without them, stacked linear layers collapse into one linear function, so depth adds nothing."
+        },
+        {
+          "q": "What is a layer, concretely?",
+          "a": "A matrix multiply plus bias (Wx + b) followed by an elementwise activation."
+        }
+      ],
       "children": [
         {
           "id": "ai.neural-nets.perceptron",
           "title": "Neurons & Layers",
           "summary": "Weighted sum plus bias, passed through an activation; many in parallel form a layer.",
-          "prompts": ["Write the formula for one neuron.", "What does a layer's weight matrix shape mean?"],
+          "hook": "A neuron is a voter: weigh each input's opinion, add a bias, then decide how loudly to speak.",
+          "cards": [
+            {
+              "q": "Write the formula for one neuron.",
+              "a": "y = f(w · x + b)."
+            },
+            {
+              "q": "What does a layer's weight matrix shape mean?",
+              "a": "W is (outputs × inputs): each row is one neuron's weights over all inputs."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.neural-nets.activations",
           "title": "Activation Functions",
           "summary": "ReLU, GELU, sigmoid, tanh: the nonlinearities that make depth useful.",
-          "prompts": ["Why did ReLU replace sigmoid in deep nets?", "What is the vanishing gradient problem?"],
+          "hook": "Activations are the bends in a wire; without bends you can only make straight lines.",
+          "cards": [
+            {
+              "q": "Why did ReLU replace sigmoid in deep nets?",
+              "a": "ReLU doesn't saturate for positive inputs, so gradients stay strong; it's also cheap to compute."
+            },
+            {
+              "q": "What is the vanishing gradient problem?",
+              "a": "Gradients shrink as they multiply through many saturating layers, so early layers barely learn."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.neural-nets.backprop",
           "title": "Backpropagation",
           "summary": "The chain rule applied layer by layer to get gradients for every weight.",
-          "resources": [{ "title": "Karpathy: micrograd", "url": "https://github.com/karpathy/micrograd" }],
-          "prompts": ["Explain backprop in two sentences.", "Why compute gradients backward instead of forward?"],
+          "hook": "Blame assignment: pass the error backward, each layer takes its share of the blame.",
+          "resources": [
+            {
+              "title": "Karpathy: micrograd",
+              "url": "https://github.com/karpathy/micrograd"
+            }
+          ],
+          "cards": [
+            {
+              "q": "Explain backprop in two sentences.",
+              "a": "Run forward to get the loss, then apply the chain rule from the output back, reusing each layer's gradient for the one before it."
+            },
+            {
+              "q": "Why compute gradients backward instead of forward?",
+              "a": "One backward pass gets gradients for all weights at once because the loss is a single scalar; forward mode would need a pass per parameter."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.neural-nets.cnn",
           "title": "Convolutional Nets",
           "summary": "Shared local filters that exploit spatial structure in images.",
-          "prompts": ["What does weight sharing buy you?", "What does pooling do?"],
+          "hook": "A flashlight sliding over the image, looking for the same pattern everywhere.",
+          "cards": [
+            {
+              "q": "What does weight sharing buy you?",
+              "a": "Far fewer parameters and translation equivariance: a cat-ear detector works anywhere in the image."
+            },
+            {
+              "q": "What does pooling do?",
+              "a": "Downsamples feature maps, keeping the strongest signals and adding small shift invariance."
+            }
+          ],
           "children": []
         }
       ]
@@ -88,36 +202,100 @@
       "id": "ai.transformers",
       "title": "Transformers",
       "summary": "Attention-based architecture behind modern language, vision and audio models.",
-      "resources": [{ "title": "Attention Is All You Need", "url": "https://arxiv.org/abs/1706.03762" }],
-      "prompts": ["What problem with RNNs did transformers solve?", "Name the main blocks of a transformer layer."],
+      "hook": "A meeting where every word can talk to every other word at once, instead of a game of telephone.",
+      "resources": [
+        {
+          "title": "Attention Is All You Need",
+          "url": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "cards": [
+        {
+          "q": "What problem with RNNs did transformers solve?",
+          "a": "RNNs process tokens one by one, so they're slow to train and forget long-range context; attention is parallel and direct."
+        },
+        {
+          "q": "Name the main blocks of a transformer layer.",
+          "a": "Multi-head self-attention, a feed-forward MLP, with residual connections and layer norm around each."
+        }
+      ],
       "children": [
         {
           "id": "ai.transformers.tokenization",
           "title": "Tokenization",
           "summary": "Splitting text into subword tokens (BPE) the model maps to embeddings.",
-          "prompts": ["Why subwords instead of whole words or characters?", "Why can token counts differ between languages?"],
+          "hook": "Lego bricks for text: common words are one brick, rare words snap together from pieces.",
+          "cards": [
+            {
+              "q": "Why subwords instead of whole words or characters?",
+              "a": "Words leave too many rare/unknown items; characters make sequences very long. Subwords balance vocabulary and length."
+            },
+            {
+              "q": "Why can token counts differ between languages?",
+              "a": "Tokenizers are trained mostly on some languages, so others split into many more pieces per word."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.transformers.embeddings",
           "title": "Embeddings",
           "summary": "Dense vectors for tokens; similar meanings land near each other.",
-          "prompts": ["What is an embedding table?", "How is cosine similarity used with embeddings?"],
+          "hook": "A map where meaning is location: 'king' and 'queen' live in the same neighborhood.",
+          "cards": [
+            {
+              "q": "What is an embedding table?",
+              "a": "A learned matrix with one row (vector) per token id; lookup replaces one-hot multiplication."
+            },
+            {
+              "q": "How is cosine similarity used with embeddings?",
+              "a": "The angle between vectors measures similarity, used for search, retrieval and clustering."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.transformers.attention",
           "title": "Self-Attention",
           "summary": "Each token mixes information from others, weighted by query-key similarity.",
-          "resources": [{ "title": "The Illustrated Transformer", "url": "https://jalammar.github.io/illustrated-transformer/" }],
-          "prompts": ["Write softmax(QK^T/√d)V and explain each part.", "Why scale by √d?", "What does multi-head add?"],
+          "hook": "A library: your query is matched against every book's key, and you read a blend of the best-matching values.",
+          "resources": [
+            {
+              "title": "The Illustrated Transformer",
+              "url": "https://jalammar.github.io/illustrated-transformer/"
+            }
+          ],
+          "cards": [
+            {
+              "q": "Write softmax(QK^T/√d)V and explain each part.",
+              "a": "Q·Kᵀ scores how relevant each token is to each other token, √d keeps scores in range, softmax turns them into weights, and the weights average V."
+            },
+            {
+              "q": "Why scale by √d?",
+              "a": "Dot products grow with dimension d; without scaling, softmax saturates and gradients vanish."
+            },
+            {
+              "q": "What does multi-head add?",
+              "a": "Several attention patterns in parallel, each free to focus on a different relationship (syntax, coreference, position)."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.transformers.positional",
           "title": "Positional Encoding",
           "summary": "Injecting token order, since attention alone is order-blind (sinusoidal, RoPE).",
-          "prompts": ["Why does attention need position information?", "What does RoPE rotate?"],
+          "hook": "Attention sees a bag of words; position encoding stamps each word with a seat number.",
+          "cards": [
+            {
+              "q": "Why does attention need position information?",
+              "a": "Attention is permutation-invariant: shuffle the tokens and the scores are the same, so order must be injected."
+            },
+            {
+              "q": "What does RoPE rotate?",
+              "a": "The query and key vectors, by an angle proportional to position, so their dot product depends on relative distance."
+            }
+          ],
           "children": []
         }
       ]
@@ -126,41 +304,101 @@
       "id": "ai.llms",
       "title": "Large Language Models",
       "summary": "Transformers pretrained on huge text corpora to predict the next token, then tuned to be useful.",
-      "prompts": ["What is the pretraining objective of a GPT-style model?", "What changes between a base model and a chat model?"],
+      "hook": "Autocomplete trained on the internet, then coached to be a helpful assistant.",
+      "cards": [
+        {
+          "q": "What is the pretraining objective of a GPT-style model?",
+          "a": "Predict the next token given all previous ones (causal language modeling)."
+        },
+        {
+          "q": "What changes between a base model and a chat model?",
+          "a": "A chat model is further tuned on instructions and human preferences to follow requests and hold a conversation."
+        }
+      ],
       "children": [
         {
           "id": "ai.llms.pretraining",
           "title": "Pretraining & Scaling",
           "summary": "Next-token prediction at scale; loss falls predictably with data, params and compute.",
-          "prompts": ["State the gist of scaling laws.", "Why does next-token prediction teach so much?"],
+          "hook": "Bigger brain, more books, more study time: loss falls on a smooth, predictable curve.",
+          "cards": [
+            {
+              "q": "State the gist of scaling laws.",
+              "a": "Loss falls as a power law in parameters, data and compute, so you can predict gains before training."
+            },
+            {
+              "q": "Why does next-token prediction teach so much?",
+              "a": "To predict the next word well you must model grammar, facts, reasoning and intent, so those skills emerge."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.llms.alignment",
           "title": "Fine-tuning & RLHF",
           "summary": "Instruction tuning and preference optimization to make models helpful and safe.",
-          "prompts": ["What data does instruction tuning use?", "What does the reward model in RLHF learn?"],
+          "hook": "Pretraining is reading the library; fine-tuning is the apprenticeship that teaches manners and the job.",
+          "cards": [
+            {
+              "q": "What data does instruction tuning use?",
+              "a": "Pairs of instructions and high-quality responses, often written or curated by humans."
+            },
+            {
+              "q": "What does the reward model in RLHF learn?",
+              "a": "To score responses the way humans would prefer, learned from pairwise human comparisons."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.llms.prompting",
           "title": "Prompting",
           "summary": "Steering a model with instructions, examples and structure in the context window.",
-          "prompts": ["What is few-shot prompting?", "Why does asking for step-by-step reasoning help?"],
+          "hook": "Briefing a brilliant new contractor: context, examples and the format you want.",
+          "cards": [
+            {
+              "q": "What is few-shot prompting?",
+              "a": "Including a few input→output examples in the prompt so the model infers the task."
+            },
+            {
+              "q": "Why does asking for step-by-step reasoning help?",
+              "a": "It gives the model room to compute intermediate steps in tokens instead of jumping to an answer."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.llms.rag",
           "title": "Retrieval-Augmented Generation",
           "summary": "Fetch relevant documents and put them in context so answers are grounded.",
-          "prompts": ["Sketch the RAG pipeline in four steps.", "When is RAG better than fine-tuning?"],
+          "hook": "An open-book exam: look up the relevant pages, then answer.",
+          "cards": [
+            {
+              "q": "Sketch the RAG pipeline in four steps.",
+              "a": "Chunk and embed documents → embed the query and retrieve nearest chunks → put them in the prompt → generate a grounded answer."
+            },
+            {
+              "q": "When is RAG better than fine-tuning?",
+              "a": "When facts change often, must be cited, or are private; fine-tuning is better for teaching style or skills."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.llms.agents",
           "title": "Agents & Tool Use",
           "summary": "Models that call tools in a loop to act, observe and plan toward a goal.",
-          "prompts": ["What is a tool call, mechanically?", "Name two failure modes of agent loops."],
+          "hook": "A model with hands: think, use a tool, look at the result, repeat.",
+          "cards": [
+            {
+              "q": "What is a tool call, mechanically?",
+              "a": "The model outputs a structured request (name + arguments); the host runs it and returns the result as new input."
+            },
+            {
+              "q": "Name two failure modes of agent loops.",
+              "a": "Looping without progress, and compounding errors from a bad early step or a misread tool result."
+            }
+          ],
           "children": []
         }
       ]
@@ -169,27 +407,67 @@
       "id": "ai.rl",
       "title": "Reinforcement Learning",
       "summary": "Learning by trial and error to maximize reward from an environment.",
-      "prompts": ["Define agent, environment, state, action and reward.", "What is the exploration-exploitation tradeoff?"],
+      "hook": "Training a dog: no answer key, just treats for good outcomes.",
+      "cards": [
+        {
+          "q": "Define agent, environment, state, action and reward.",
+          "a": "Agent acts; environment responds; state is the situation; action is the choice; reward is the score signal."
+        },
+        {
+          "q": "What is the exploration-exploitation tradeoff?",
+          "a": "Exploit what you know pays off, or explore to find something better."
+        }
+      ],
       "children": [
         {
           "id": "ai.rl.mdp",
           "title": "Markov Decision Processes",
           "summary": "The formal frame: states, actions, transitions, rewards and a discount factor.",
-          "prompts": ["What does the Markov property say?", "What does the discount factor γ control?"],
+          "hook": "A board game: where you stand now is all you need to know to play the next move.",
+          "cards": [
+            {
+              "q": "What does the Markov property say?",
+              "a": "The future depends only on the current state and action, not on how you got there."
+            },
+            {
+              "q": "What does the discount factor γ control?",
+              "a": "How much future rewards count compared to immediate ones; γ near 1 is far-sighted."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.rl.q-learning",
           "title": "Q-Learning",
           "summary": "Learn the value of each action in each state from bootstrapped targets.",
-          "prompts": ["Write the Q-learning update rule.", "What did DQN add to make it work with images?"],
+          "hook": "A cheat sheet scoring every move in every position, refined after each game.",
+          "cards": [
+            {
+              "q": "Write the Q-learning update rule.",
+              "a": "Q(s,a) ← Q(s,a) + α[r + γ·maxₐ' Q(s',a') − Q(s,a)]."
+            },
+            {
+              "q": "What did DQN add to make it work with images?",
+              "a": "A neural network for Q, an experience replay buffer, and a slowly updated target network."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.rl.policy-gradients",
           "title": "Policy Gradients",
           "summary": "Directly adjust a policy's parameters toward actions that earned more reward (REINFORCE, PPO).",
-          "prompts": ["Why do policy gradients have high variance?", "What does PPO's clipping prevent?"],
+          "hook": "Do more of what just worked, less of what didn't, adjusted directly in the habit itself.",
+          "cards": [
+            {
+              "q": "Why do policy gradients have high variance?",
+              "a": "Returns from sampled episodes vary a lot, so the gradient estimate is noisy; baselines reduce this."
+            },
+            {
+              "q": "What does PPO's clipping prevent?",
+              "a": "Too-large policy updates in one step that would wreck a working policy."
+            }
+          ],
           "children": []
         }
       ]
@@ -198,27 +476,67 @@
       "id": "ai.evaluation",
       "title": "Evaluation & Safety",
       "summary": "Measuring what models can do and keeping their behavior within bounds.",
-      "prompts": ["Why are static benchmarks not enough?", "Name two categories of AI risk."],
+      "hook": "You can't improve what you can't measure, and you can't trust what you haven't stress-tested.",
+      "cards": [
+        {
+          "q": "Why are static benchmarks not enough?",
+          "a": "They get saturated, leak into training data, and miss real-world behavior."
+        },
+        {
+          "q": "Name two categories of AI risk.",
+          "a": "Misuse (people using it for harm) and misalignment (the model pursuing unintended goals)."
+        }
+      ],
       "children": [
         {
           "id": "ai.evaluation.metrics",
           "title": "Metrics",
           "summary": "Accuracy, precision, recall, F1, perplexity: picking the number that matches the goal.",
-          "prompts": ["When is accuracy misleading?", "Define precision and recall."],
+          "hook": "Pick the scoreboard that matches the game you're actually playing.",
+          "cards": [
+            {
+              "q": "When is accuracy misleading?",
+              "a": "With imbalanced classes: 99% accuracy by always predicting 'not fraud.'"
+            },
+            {
+              "q": "Define precision and recall.",
+              "a": "Precision: of predicted positives, how many are right. Recall: of actual positives, how many you found."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.evaluation.evals",
           "title": "LLM Evals",
           "summary": "Benchmarks, held-out tasks and model-graded evals for open-ended outputs.",
-          "prompts": ["What is benchmark contamination?", "What are the risks of LLM-as-judge?"],
+          "hook": "A test only measures what it hasn't already leaked into the textbook.",
+          "cards": [
+            {
+              "q": "What is benchmark contamination?",
+              "a": "Test questions appear in training data, inflating scores."
+            },
+            {
+              "q": "What are the risks of LLM-as-judge?",
+              "a": "Judge bias (length, position, self-preference) and blind spots shared with the model under test."
+            }
+          ],
           "children": []
         },
         {
           "id": "ai.evaluation.safety",
           "title": "Alignment & Safety",
           "summary": "Red-teaming, interpretability and guardrails against harmful or deceptive behavior.",
-          "prompts": ["What is a jailbreak?", "What does interpretability research try to find?"],
+          "hook": "Seatbelts, crash tests and an X-ray of the engine.",
+          "cards": [
+            {
+              "q": "What is a jailbreak?",
+              "a": "A prompt that tricks a model into bypassing its safety behavior."
+            },
+            {
+              "q": "What does interpretability research try to find?",
+              "a": "The internal features and circuits that explain how a model computes its outputs."
+            }
+          ],
           "children": []
         }
       ]

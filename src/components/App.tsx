@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { MapNode } from '../lib/types';
 import {
-  load, save, review, flag, stateOf, mastery, isDue, MAX, UNLOCK_AT,
-  type Progress, type Rating, type NodeState, type Want,
+  load, save, review, flag, setNote, stateOf, mastery, isDue, MAX, UNLOCK_AT,
+  type Progress, type Rating, type NodeState, type Want, type NodeProgress,
 } from '../lib/progress';
 import Sync from './Sync';
 import { sfx, isMuted, setMuted } from '../lib/sfx';
@@ -11,7 +11,7 @@ interface Props { maps: MapNode[] }
 interface Entry { node: MapNode; parent?: MapNode; path: MapNode[] }
 
 const UNIVERSE: Omit<MapNode, 'children'> = {
-  id: '', title: 'Orbit', summary: 'Each topic is a sun. Pick one to fly in.', prompts: [],
+  id: '', title: 'Orbit', summary: 'Each topic is a sun. Pick one to fly in.', hook: '', cards: [],
 };
 
 const STATE_LABEL: Record<NodeState, string> = {
@@ -170,9 +170,10 @@ export default function App({ maps }: Props) {
       </div>
 
       <Detail entry={sel} state={sel.node.id ? state(sel.node.id) : 'unlocked'} progress={progress}
-        onRate={(r) => {
+        onRate={(r, note) => {
           const before = mastery(progress, sel.node.id);
-          const next = review(progress, sel.node.id, r);
+          let next = review(progress, sel.node.id, r);
+          if ((next.nodes[sel.node.id]?.note ?? '') !== note.trim()) next = setNote(next, sel.node.id, note);
           const after = mastery(next, sel.node.id);
           if (r === 'forgot') sfx.fail();
           else if (after >= MAX && before < MAX) sfx.mastered();
@@ -181,6 +182,7 @@ export default function App({ maps }: Props) {
           update(next);
         }}
         onWant={(w) => { sfx.beep(); update(flag(progress, sel.node.id, w)); }}
+        onNote={(n) => { if ((progress.nodes[sel.node.id]?.note ?? '') !== n.trim()) update(setNote(progress, sel.node.id, n)); }}
         onZoom={sel.node.children.length && sel.node.id !== focus ? () => { sfx.warpIn(); setDir('in'); go(sel.node.id); setSelected(sel.node.id); } : undefined} />
 
       {syncOpen && <Sync progress={progress} knownIds={new Set(index.keys())} onClose={() => setSyncOpen(false)} onReplace={update} />}
@@ -222,12 +224,11 @@ function Legend() {
   );
 }
 
-function Detail({ entry, state, progress, onRate, onWant, onZoom }: {
-  entry: Entry; state: NodeState; progress: Progress; onRate: (r: Rating) => void; onWant: (w: Want) => void; onZoom?: () => void;
+function Detail({ entry, state, progress, onRate, onWant, onNote, onZoom }: {
+  entry: Entry; state: NodeState; progress: Progress; onRate: (r: Rating, note: string) => void; onWant: (w: Want) => void;
+  onNote: (n: string) => void; onZoom?: () => void;
 }) {
   const { node, parent } = entry;
-  const [shown, setShown] = useState(false);
-  useEffect(() => setShown(false), [node.id]);
   const np = progress.nodes[node.id];
   if (!node.id) return (
     <section class="detail"><h2>{node.title}</h2><p class="muted">{node.summary}</p></section>
@@ -255,20 +256,7 @@ function Detail({ entry, state, progress, onRate, onWant, onZoom }: {
       {state === 'locked' ? (
         <p class="locked-note">Locked: raise <strong>{parent?.title}</strong> to mastery {UNLOCK_AT} to unlock this.</p>
       ) : (
-        <div class="recall">
-          <h3>Recall</h3>
-          <ol>{node.prompts.map((q) => <li key={q}>{q}</li>)}</ol>
-          {!shown ? (
-            <button class="btn primary" onClick={() => { sfx.blip(); setShown(true); }}>I've answered from memory → rate it</button>
-          ) : (
-            <div class="rate" role="group" aria-label="How well did you recall it?">
-              <button class="btn bad" onClick={() => { setShown(false); onRate('forgot'); }}>Forgot</button>
-              <button class="btn" onClick={() => { setShown(false); onRate('hard'); }}>Hard</button>
-              <button class="btn" onClick={() => { setShown(false); onRate('good'); }}>Good</button>
-              <button class="btn good" onClick={() => { setShown(false); onRate('easy'); }}>Easy</button>
-            </div>
-          )}
-        </div>
+        <Review key={node.id} node={node} np={np} onRate={onRate} onNote={onNote} />
       )}
       {state !== 'locked' && (
         <div class="want">
@@ -282,5 +270,109 @@ function Detail({ entry, state, progress, onRate, onWant, onZoom }: {
       )}
       {onZoom && <button class="btn ghost" onClick={onZoom}>Fly into {node.title} →</button>}
     </section>
+  );
+}
+
+const shuffle = <T,>(a: T[]) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+
+const RATINGS: { r: Rating; label: string; hint: string; cls: string }[] = [
+  { r: 'forgot', label: 'Forgot', hint: "Couldn't produce the key idea", cls: 'bad' },
+  { r: 'hard', label: 'Hard', hint: 'Got there partly or slowly', cls: '' },
+  { r: 'good', label: 'Good', hint: 'Got the key ideas', cls: '' },
+  { r: 'easy', label: 'Easy', hint: 'Instant, could teach it', cls: 'good' },
+];
+
+/**
+ * Study → test loop built on retrieval practice:
+ * a new node shows its intuition hook and answers first (study); afterwards every review
+ * hides them so you must generate the answer yourself, then compare, explain it in your
+ * own words, and rate. Cards come in a fresh random order each time.
+ */
+function Review({ node, np, onRate, onNote }: {
+  node: MapNode; np?: NodeProgress; onRate: (r: Rating, note: string) => void; onNote: (n: string) => void;
+}) {
+  const isNew = !np?.reviews;
+  const [phase, setPhase] = useState<'idle' | 'study' | 'ask' | 'reveal' | 'reflect'>('idle');
+  const [order, setOrder] = useState(() => shuffle(node.cards));
+  const [i, setI] = useState(0);
+  const [typed, setTyped] = useState('');
+  const [note, setNoteText] = useState(np?.note ?? '');
+  const card = order[i];
+
+  const start = (p: 'study' | 'ask') => { sfx.blip(); setOrder(shuffle(node.cards)); setI(0); setTyped(''); setPhase(p); };
+  const next = () => {
+    sfx.blip(); setTyped('');
+    if (i + 1 < order.length) { setI(i + 1); setPhase('ask'); } else setPhase('reflect');
+  };
+  const finish = (r: Rating) => { setPhase('idle'); onRate(r, note); };
+
+  if (phase === 'idle') return (
+    <div class="recall">
+      {isNew ? (
+        <>
+          <div class="hook"><span>💡</span><p>{node.hook}</p></div>
+          <p class="muted small">New node: read the {node.cards.length} cards first, then test yourself.</p>
+          <div class="row">
+            <button class="btn primary" onClick={() => start('study')}>Study {node.cards.length} cards</button>
+            <button class="btn" onClick={() => start('ask')}>Test myself</button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p class="muted small">Answer {node.cards.length} cards from memory, then compare. The intuition stays hidden until you've tried.</p>
+          <button class="btn primary" onClick={() => start('ask')}>Start review</button>
+        </>
+      )}
+    </div>
+  );
+
+  if (phase === 'study') return (
+    <div class="recall">
+      <div class="hook"><span>💡</span><p>{node.hook}</p></div>
+      <ol class="study">{node.cards.map((c) => <li key={c.q}><strong>{c.q}</strong><p>{c.a}</p></li>)}</ol>
+      <p class="muted small">Cover the answers in your head. Ready? Now pull them back out without looking.</p>
+      <button class="btn primary" onClick={() => start('ask')}>Test myself →</button>
+    </div>
+  );
+
+  if (phase === 'reflect') return (
+    <div class="recall">
+      <div class="hook"><span>💡</span><p>{node.hook}</p></div>
+      <label class="note">
+        <span>In your own words: why does it work, or what does it remind you of?</span>
+        <textarea rows={3} value={note} placeholder="e.g. It's like… / The reason is…"
+          onInput={(e) => setNoteText((e.target as HTMLTextAreaElement).value)} onBlur={() => onNote(note)} />
+      </label>
+      <p class="muted small">How well did you recall it overall?</p>
+      <div class="rate" role="group" aria-label="How well did you recall it?">
+        {RATINGS.map((x) => (
+          <button key={x.r} class={`btn ${x.cls}`} title={x.hint} onClick={() => finish(x.r)}>
+            {x.label}<small>{x.hint}</small>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div class="recall">
+      <p class="eyebrow muted">Card {i + 1} of {order.length}</p>
+      <p class="q">{card.q}</p>
+      {phase === 'ask' ? (
+        <>
+          <textarea class="attempt" rows={3} value={typed} autoFocus placeholder="Type or say your answer first, even a guess. Generating it is what makes it stick."
+            onInput={(e) => setTyped((e.target as HTMLTextAreaElement).value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); sfx.blip(); setPhase('reveal'); } }} />
+          <button class="btn primary" onClick={() => { sfx.blip(); setPhase('reveal'); }}>Reveal answer</button>
+        </>
+      ) : (
+        <>
+          {typed.trim() && <div class="yours"><span class="muted small">You said</span><p>{typed}</p></div>}
+          <div class="answer"><span class="muted small">Answer</span><p>{card.a}</p></div>
+          {np?.note && <div class="yours"><span class="muted small">Your earlier explanation</span><p>{np.note}</p></div>}
+          <button class="btn primary" onClick={next}>{i + 1 < order.length ? 'Next card →' : 'Wrap up →'}</button>
+        </>
+      )}
+    </div>
   );
 }

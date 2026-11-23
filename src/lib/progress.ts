@@ -18,6 +18,8 @@ export interface NodeProgress {
   lapses: number;
   /** What the learner wants Claude to add here next. */
   want?: Want;
+  /** The learner's own explanation, shown back after future reviews. */
+  note?: string;
   /** Last time anything on this node changed (review or flag). Used when merging. */
   touched?: string;
 }
@@ -62,6 +64,7 @@ export function normalize(data: unknown): Progress {
       reviews: Number(n.reviews) || 0,
       lapses: Number(n.lapses) || 0,
       want: n.want === 'depth' || n.want === 'breadth' ? n.want : undefined,
+      note: typeof n.note === 'string' ? n.note.slice(0, 2000) : undefined,
       touched: typeof n.touched === 'string' ? n.touched : undefined,
     };
   }
@@ -95,6 +98,7 @@ export function review(p: Progress, id: string, rating: Rating, now = new Date()
     reviews: cur.reviews + 1,
     lapses: cur.lapses + (rating === 'forgot' ? 1 : 0),
     want: cur.want,
+    note: cur.note,
     touched: now.toISOString(),
   };
   return { ...p, nodes: { ...p.nodes, [id]: next } };
@@ -104,6 +108,11 @@ export function review(p: Progress, id: string, rating: Rating, now = new Date()
 export function flag(p: Progress, id: string, want: Want): Progress {
   const cur = p.nodes[id] ?? { mastery: 0, reviews: 0, lapses: 0 };
   return { ...p, nodes: { ...p.nodes, [id]: { ...cur, want: cur.want === want ? undefined : want, touched: new Date().toISOString() } } };
+}
+
+export function setNote(p: Progress, id: string, note: string): Progress {
+  const cur = p.nodes[id] ?? { mastery: 0, reviews: 0, lapses: 0 };
+  return { ...p, nodes: { ...p.nodes, [id]: { ...cur, note: note.trim() || undefined, touched: new Date().toISOString() } } };
 }
 
 export const mastery = (p: Progress, id: string) => p.nodes[id]?.mastery ?? 0;

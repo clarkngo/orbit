@@ -2,33 +2,54 @@
   "id": "system-design",
   "title": "System Design",
   "summary": "Designing large-scale systems that stay fast, available and correct as load grows.",
-  "prompts": [
-    "Name the first five questions you ask in a system design interview.",
-    "What is the difference between functional and non-functional requirements?"
+  "hook": "Every design is a trade: you buy speed, scale or safety with complexity and money.",
+  "cards": [
+    {
+      "q": "Name the first five questions you ask in a system design interview.",
+      "a": "Who uses it and how; scale (users, QPS, data size); read/write ratio; latency and consistency needs; what's out of scope."
+    },
+    {
+      "q": "What is the difference between functional and non-functional requirements?",
+      "a": "Functional: what it does (post, follow). Non-functional: how well (latency, availability, durability)."
+    }
   ],
   "children": [
     {
       "id": "system-design.fundamentals",
       "title": "Fundamentals",
       "summary": "Latency, throughput, availability and the tradeoffs that shape every design.",
+      "hook": "A highway: latency is the drive time, throughput is cars per hour.",
       "resources": [
         {
           "title": "System Design Primer",
           "url": "https://github.com/donnemartin/system-design-primer"
         }
       ],
-      "prompts": [
-        "Define latency vs throughput.",
-        "What does 'four nines' of availability allow per year?"
+      "cards": [
+        {
+          "q": "Define latency vs throughput.",
+          "a": "Latency: time per request. Throughput: requests handled per unit time."
+        },
+        {
+          "q": "What does 'four nines' of availability allow per year?",
+          "a": "99.99% allows about 52 minutes of downtime a year."
+        }
       ],
       "children": [
         {
           "id": "system-design.fundamentals.estimation",
           "title": "Back-of-Envelope Estimation",
           "summary": "Rough QPS, storage and bandwidth math to size a system before designing it.",
-          "prompts": [
-            "Estimate QPS for 100M daily active users making 10 requests each.",
-            "Roughly how many seconds are in a day?"
+          "hook": "Napkin math: right order of magnitude beats a precise wrong design.",
+          "cards": [
+            {
+              "q": "Estimate QPS for 100M daily active users making 10 requests each.",
+              "a": "1B requests/day ÷ ~100K s ≈ 10K QPS average; plan for 2–3× peak."
+            },
+            {
+              "q": "Roughly how many seconds are in a day?",
+              "a": "86,400, round to ~100K for napkin math."
+            }
           ],
           "children": []
         },
@@ -36,9 +57,16 @@
           "id": "system-design.fundamentals.cap",
           "title": "CAP & PACELC",
           "summary": "Under a partition you pick consistency or availability; otherwise latency vs consistency.",
-          "prompts": [
-            "State CAP in one sentence.",
-            "What does PACELC add?"
+          "hook": "When the phone line between offices is cut, either stop answering or risk giving stale answers.",
+          "cards": [
+            {
+              "q": "State CAP in one sentence.",
+              "a": "During a network partition, a distributed system must choose consistency or availability."
+            },
+            {
+              "q": "What does PACELC add?",
+              "a": "Even without a partition, you trade latency against consistency (Else: Latency vs Consistency)."
+            }
           ],
           "children": []
         },
@@ -46,9 +74,16 @@
           "id": "system-design.fundamentals.consistency",
           "title": "Consistency Models",
           "summary": "Strong, eventual, read-your-writes, causal: what readers are guaranteed to see.",
-          "prompts": [
-            "Give an example where eventual consistency is fine.",
-            "What is read-your-writes?"
+          "hook": "How fresh is the gossip you hear: instantly, eventually, or at least your own news?",
+          "cards": [
+            {
+              "q": "Give an example where eventual consistency is fine.",
+              "a": "Like counts or a social feed: a few seconds stale doesn't matter."
+            },
+            {
+              "q": "What is read-your-writes?",
+              "a": "After you write something, your own reads always see it, even if others don't yet."
+            }
           ],
           "children": []
         }
@@ -58,18 +93,32 @@
       "id": "system-design.scaling",
       "title": "Scaling",
       "summary": "Growing capacity by adding machines and spreading load across them.",
-      "prompts": [
-        "Vertical vs horizontal scaling: tradeoffs?",
-        "Why should app servers be stateless?"
+      "hook": "Bigger truck vs more trucks.",
+      "cards": [
+        {
+          "q": "Vertical vs horizontal scaling: tradeoffs?",
+          "a": "Vertical is simple but capped and a single point of failure; horizontal scales out but adds coordination."
+        },
+        {
+          "q": "Why should app servers be stateless?",
+          "a": "So any server can handle any request: you can add, remove or replace them freely behind a load balancer."
+        }
       ],
       "children": [
         {
           "id": "system-design.scaling.load-balancing",
           "title": "Load Balancing",
           "summary": "Spread requests across servers with round robin, least connections or hashing, at L4 or L7.",
-          "prompts": [
-            "L4 vs L7 load balancer?",
-            "How do health checks work?"
+          "hook": "A host seating diners evenly across waiters.",
+          "cards": [
+            {
+              "q": "L4 vs L7 load balancer?",
+              "a": "L4 routes by IP/port (fast, blind to content); L7 reads HTTP and can route by path, header or cookie."
+            },
+            {
+              "q": "How do health checks work?",
+              "a": "The balancer pings each server periodically and stops sending traffic to ones that fail."
+            }
           ],
           "children": []
         },
@@ -77,9 +126,16 @@
           "id": "system-design.scaling.caching",
           "title": "Caching",
           "summary": "Keep hot data in memory: cache-aside, write-through, write-back, with TTLs and eviction.",
-          "prompts": [
-            "Explain cache-aside.",
-            "What is a cache stampede and one fix?"
+          "hook": "Keep the stuff you use most on your desk instead of walking to the archive.",
+          "cards": [
+            {
+              "q": "Explain cache-aside.",
+              "a": "App checks cache; on miss, reads DB, writes the result to cache, returns it."
+            },
+            {
+              "q": "What is a cache stampede and one fix?",
+              "a": "A hot key expires and many requests hit the DB at once; fix with request coalescing, locks or staggered TTLs."
+            }
           ],
           "children": []
         },
@@ -87,9 +143,16 @@
           "id": "system-design.scaling.cdn",
           "title": "CDNs",
           "summary": "Serve static and cacheable content from edge locations close to users.",
-          "prompts": [
-            "Push vs pull CDN?",
-            "How do you invalidate CDN content?"
+          "hook": "Warehouses near customers instead of shipping everything from one factory.",
+          "cards": [
+            {
+              "q": "Push vs pull CDN?",
+              "a": "Push: you upload content to the CDN. Pull: the CDN fetches from origin on first request and caches it."
+            },
+            {
+              "q": "How do you invalidate CDN content?",
+              "a": "Versioned file names (cache busting), purge APIs, or short TTLs."
+            }
           ],
           "children": []
         },
@@ -97,9 +160,16 @@
           "id": "system-design.scaling.rate-limiting",
           "title": "Rate Limiting",
           "summary": "Protect services with token bucket, leaky bucket or sliding-window limits.",
-          "prompts": [
-            "Explain the token bucket algorithm.",
-            "Where would you enforce rate limits?"
+          "hook": "A bouncer with a ticket roll: tickets refill at a steady rate, no ticket no entry.",
+          "cards": [
+            {
+              "q": "Explain the token bucket algorithm.",
+              "a": "A bucket refills tokens at a fixed rate up to a cap; each request takes one; empty bucket means reject. Allows short bursts."
+            },
+            {
+              "q": "Where would you enforce rate limits?",
+              "a": "At the API gateway or edge, keyed by user, API key or IP, often backed by Redis."
+            }
           ],
           "children": []
         }
@@ -109,18 +179,32 @@
       "id": "system-design.data",
       "title": "Data Storage",
       "summary": "Picking and scaling the right database for the access pattern.",
-      "prompts": [
-        "SQL vs NoSQL: when to choose each?",
-        "What access pattern questions drive a storage choice?"
+      "hook": "Choose the database by how you'll ask questions of it, not by fashion.",
+      "cards": [
+        {
+          "q": "SQL vs NoSQL: when to choose each?",
+          "a": "SQL for relations, transactions and ad-hoc queries; NoSQL for huge scale, flexible schemas or simple key access."
+        },
+        {
+          "q": "What access pattern questions drive a storage choice?",
+          "a": "Read vs write heavy, query shape (key lookup, range, joins, search), consistency needs, size and growth."
+        }
       ],
       "children": [
         {
           "id": "system-design.data.sql-nosql",
           "title": "SQL vs NoSQL",
           "summary": "Relational with ACID and joins vs key-value, document, wide-column and graph stores.",
-          "prompts": [
-            "Name the four NoSQL families with an example of each.",
-            "What does ACID stand for?"
+          "hook": "A spreadsheet with strict columns vs a set of labeled boxes you can stuff anything into.",
+          "cards": [
+            {
+              "q": "Name the four NoSQL families with an example of each.",
+              "a": "Key-value (Redis), document (MongoDB), wide-column (Cassandra), graph (Neo4j)."
+            },
+            {
+              "q": "What does ACID stand for?",
+              "a": "Atomicity, Consistency, Isolation, Durability."
+            }
           ],
           "children": []
         },
@@ -128,9 +212,16 @@
           "id": "system-design.data.indexing",
           "title": "Indexes",
           "summary": "B-trees and LSM trees trade write cost for fast reads.",
-          "prompts": [
-            "Why do indexes slow down writes?",
-            "B-tree vs LSM tree?"
+          "hook": "The index at the back of a book: fast lookups, but every new page means updating it.",
+          "cards": [
+            {
+              "q": "Why do indexes slow down writes?",
+              "a": "Each write must update every index too."
+            },
+            {
+              "q": "B-tree vs LSM tree?",
+              "a": "B-trees update in place and read fast; LSM trees append and compact later, so writes are faster."
+            }
           ],
           "children": []
         },
@@ -138,9 +229,16 @@
           "id": "system-design.data.replication",
           "title": "Replication",
           "summary": "Copies of data for availability and read scale: leader-follower, multi-leader, leaderless.",
-          "prompts": [
-            "What is replication lag and one problem it causes?",
-            "How do quorums work (R + W > N)?"
+          "hook": "Photocopies in several offices: safer and more readers, but copies can lag.",
+          "cards": [
+            {
+              "q": "What is replication lag and one problem it causes?",
+              "a": "Followers trail the leader; a user may not see their own just-written data when reading from a follower."
+            },
+            {
+              "q": "How do quorums work (R + W > N)?",
+              "a": "With N replicas, writes go to W and reads to R; if R + W > N the sets overlap, so a read sees the latest write."
+            }
           ],
           "children": []
         },
@@ -148,10 +246,20 @@
           "id": "system-design.data.sharding",
           "title": "Sharding",
           "summary": "Split data across nodes by key range or hash; consistent hashing eases rebalancing.",
-          "prompts": [
-            "Range vs hash sharding?",
-            "What problem does consistent hashing solve?",
-            "What is a hot shard?"
+          "hook": "Splitting the phone book into volumes A–F, G–M, and so on.",
+          "cards": [
+            {
+              "q": "Range vs hash sharding?",
+              "a": "Range keeps neighbors together (good for scans, risk of hotspots); hash spreads evenly but breaks range queries."
+            },
+            {
+              "q": "What problem does consistent hashing solve?",
+              "a": "Adding or removing a node only moves a small fraction of keys instead of reshuffling everything."
+            },
+            {
+              "q": "What is a hot shard?",
+              "a": "One shard gets far more traffic than others, e.g. a celebrity's data."
+            }
           ],
           "children": []
         }
@@ -161,18 +269,32 @@
       "id": "system-design.async",
       "title": "Async & Messaging",
       "summary": "Decoupling services with queues, logs and events.",
-      "prompts": [
-        "Why put a queue between two services?",
-        "Queue vs pub/sub?"
+      "hook": "A ticket counter: drop off your order, go do other things, pick it up later.",
+      "cards": [
+        {
+          "q": "Why put a queue between two services?",
+          "a": "To decouple them, absorb spikes, and keep working when the consumer is slow or down."
+        },
+        {
+          "q": "Queue vs pub/sub?",
+          "a": "A queue gives each message to one consumer; pub/sub delivers each message to every subscriber."
+        }
       ],
       "children": [
         {
           "id": "system-design.async.queues",
           "title": "Message Queues",
           "summary": "Buffer work between producers and consumers; at-least-once delivery and retries.",
-          "prompts": [
-            "What is a dead-letter queue?",
-            "Why must consumers be idempotent?"
+          "hook": "A to-do pile between two coworkers who work at different speeds.",
+          "cards": [
+            {
+              "q": "What is a dead-letter queue?",
+              "a": "Where messages go after failing too many times, so they can be inspected instead of blocking the queue."
+            },
+            {
+              "q": "Why must consumers be idempotent?",
+              "a": "At-least-once delivery means duplicates happen; processing twice must not cause double effects."
+            }
           ],
           "children": []
         },
@@ -180,9 +302,16 @@
           "id": "system-design.async.streams",
           "title": "Event Streams",
           "summary": "Append-only partitioned logs like Kafka that many consumers replay.",
-          "prompts": [
-            "How does Kafka keep ordering?",
-            "What is a consumer group?"
+          "hook": "A ship's log: append-only, and anyone can reread from any page.",
+          "cards": [
+            {
+              "q": "How does Kafka keep ordering?",
+              "a": "Ordering is guaranteed within a partition; messages with the same key go to the same partition."
+            },
+            {
+              "q": "What is a consumer group?",
+              "a": "A set of consumers sharing a topic, each partition read by exactly one member."
+            }
           ],
           "children": []
         },
@@ -190,9 +319,16 @@
           "id": "system-design.async.idempotency",
           "title": "Idempotency & Exactly-Once",
           "summary": "Make retries safe with idempotency keys and deduplication.",
-          "prompts": [
-            "How does an idempotency key work for payments?",
-            "Why is true exactly-once delivery hard?"
+          "hook": "Pressing the elevator button twice still calls one elevator.",
+          "cards": [
+            {
+              "q": "How does an idempotency key work for payments?",
+              "a": "The client sends a unique key; the server stores the result per key and returns it for repeats instead of charging again."
+            },
+            {
+              "q": "Why is true exactly-once delivery hard?",
+              "a": "Networks can lose acks, so senders must retry; you get at-least-once plus dedup instead."
+            }
           ],
           "children": []
         }
@@ -202,18 +338,32 @@
       "id": "system-design.reliability",
       "title": "Reliability",
       "summary": "Keeping systems up and understandable when parts fail.",
-      "prompts": [
-        "What is a single point of failure?",
-        "Define SLI, SLO and SLA."
+      "hook": "Assume everything breaks; design so nobody notices.",
+      "cards": [
+        {
+          "q": "What is a single point of failure?",
+          "a": "A component whose failure takes the whole system down."
+        },
+        {
+          "q": "Define SLI, SLO and SLA.",
+          "a": "SLI: what you measure. SLO: the target. SLA: the contractual promise with penalties."
+        }
       ],
       "children": [
         {
           "id": "system-design.reliability.redundancy",
           "title": "Redundancy & Failover",
           "summary": "Replicas across zones and regions, with active-active or active-passive failover.",
-          "prompts": [
-            "Active-active vs active-passive?",
-            "What is split-brain?"
+          "hook": "A spare tire you've actually tested.",
+          "cards": [
+            {
+              "q": "Active-active vs active-passive?",
+              "a": "Active-active: all sites serve traffic. Active-passive: a standby takes over on failure."
+            },
+            {
+              "q": "What is split-brain?",
+              "a": "Both sides of a partition think they're the leader and accept conflicting writes."
+            }
           ],
           "children": []
         },
@@ -221,9 +371,16 @@
           "id": "system-design.reliability.resilience",
           "title": "Timeouts, Retries, Breakers",
           "summary": "Bound waits, retry with backoff and jitter, trip circuit breakers to stop cascades.",
-          "prompts": [
-            "Why add jitter to retries?",
-            "What does a circuit breaker do in each state?"
+          "hook": "Don't keep redialing a dead phone; wait longer each time, and give up after a while.",
+          "cards": [
+            {
+              "q": "Why add jitter to retries?",
+              "a": "So many clients don't retry in sync and stampede the recovering service."
+            },
+            {
+              "q": "What does a circuit breaker do in each state?",
+              "a": "Closed: requests flow. Open: fail fast. Half-open: let a few through to test recovery."
+            }
           ],
           "children": []
         },
@@ -231,9 +388,16 @@
           "id": "system-design.reliability.observability",
           "title": "Observability",
           "summary": "Metrics, logs and traces to see what a distributed system is doing.",
-          "prompts": [
-            "Metrics vs logs vs traces?",
-            "What are the four golden signals?"
+          "hook": "Dashboard gauges, a diary and a GPS trail for every request.",
+          "cards": [
+            {
+              "q": "Metrics vs logs vs traces?",
+              "a": "Metrics: aggregated numbers over time. Logs: discrete events. Traces: one request's path across services."
+            },
+            {
+              "q": "What are the four golden signals?",
+              "a": "Latency, traffic, errors, saturation."
+            }
           ],
           "children": []
         }
@@ -243,18 +407,32 @@
       "id": "system-design.case-studies",
       "title": "Classic Designs",
       "summary": "Applying the building blocks to well-known interview systems.",
-      "prompts": [
-        "Walk through the steps you use for any design question.",
-        "What do you trade off first when traffic 10x's?"
+      "hook": "Same Lego bricks, different buildings.",
+      "cards": [
+        {
+          "q": "Walk through the steps you use for any design question.",
+          "a": "Requirements → estimates → API → data model → high-level design → deep dive on bottlenecks → tradeoffs."
+        },
+        {
+          "q": "What do you trade off first when traffic 10x's?",
+          "a": "Usually strict consistency and freshness first, leaning on caches, async work and eventual consistency."
+        }
       ],
       "children": [
         {
           "id": "system-design.case-studies.url-shortener",
           "title": "URL Shortener",
           "summary": "ID generation, base62 encoding, a heavy read cache and redirects.",
-          "prompts": [
-            "How do you generate unique short codes?",
-            "301 vs 302 redirect here?"
+          "hook": "A coat check: hand over a long coat, get a tiny ticket.",
+          "cards": [
+            {
+              "q": "How do you generate unique short codes?",
+              "a": "Counter or ID generator (e.g. Snowflake) encoded in base62, or hashing with collision checks."
+            },
+            {
+              "q": "301 vs 302 redirect here?",
+              "a": "301 is cached by browsers (less load, no analytics); 302 hits you every time (analytics)."
+            }
           ],
           "children": []
         },
@@ -262,9 +440,16 @@
           "id": "system-design.case-studies.news-feed",
           "title": "News Feed",
           "summary": "Fan-out on write vs on read, with hybrid handling for celebrities.",
-          "prompts": [
-            "Fan-out on write vs read?",
-            "How do you handle a user with 50M followers?"
+          "hook": "Deliver the newspaper to every doorstep vs everyone fetching it from the stand.",
+          "cards": [
+            {
+              "q": "Fan-out on write vs read?",
+              "a": "Write: push posts into followers' feeds at post time (fast reads). Read: assemble the feed at request time (cheap writes)."
+            },
+            {
+              "q": "How do you handle a user with 50M followers?",
+              "a": "Don't fan out their posts; merge them in at read time (hybrid)."
+            }
           ],
           "children": []
         },
@@ -272,9 +457,16 @@
           "id": "system-design.case-studies.chat",
           "title": "Chat System",
           "summary": "WebSockets, presence, message ordering and storage for 1:1 and group chat.",
-          "prompts": [
-            "Why WebSockets over polling?",
-            "How do you order messages in a group?"
+          "hook": "An open phone line instead of repeatedly asking 'any messages?'",
+          "cards": [
+            {
+              "q": "Why WebSockets over polling?",
+              "a": "A persistent two-way connection lets the server push instantly, without polling overhead."
+            },
+            {
+              "q": "How do you order messages in a group?",
+              "a": "A per-conversation sequence number assigned by the server (or by the partition that owns the chat)."
+            }
           ],
           "children": []
         }
