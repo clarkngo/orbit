@@ -1,12 +1,14 @@
-/* ---------- tokens (dark first) ---------- */
+/* ---------- tokens ----------
+   Purple space theme matching the hero on clarkngo.github.io. Orbit is always dark: the map is a night sky. */
 :root {
-  --bg: #070a10;
-  --surface: #111722;
-  --surface-2: #19212e;
-  --border: #263244;
-  --text: #e6edf3;
-  --muted: #8b98a8;
+  --bg: #0f0720;
+  --surface: rgb(26 12 56 / .78);
+  --surface-2: #2a1752;
+  --border: #46307a;
+  --text: #f1ecff;
+  --muted: #b3a6d6;
   --accent: #7ee0b5;
+  --violet: #6a11cb;
   --sun: #ffd27a;
   --due: #ff9f5a;
   --good: #7ee0b5;
@@ -16,28 +18,12 @@
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f5f6fa;
-    --surface: #ffffff;
-    --surface-2: #e9edf3;
-    --border: #cfd6e0;
-    --text: #111821;
-    --muted: #5b6776;
-    --accent: #13845a;
-    --sun: #e09a12;
-    --due: #d4600f;
-    --good: #13845a;
-    --bad: #c62828;
-    color-scheme: light;
-  }
-}
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; min-height: 100vh; display: flex; flex-direction: column;
-  background: radial-gradient(ellipse at 50% 30%, var(--surface) 0%, var(--bg) 70%) fixed, var(--bg);
+  background-color: var(--bg);
   color: var(--text); font: 16px/1.5 var(--font);
   padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
@@ -104,7 +90,7 @@ button { font: inherit; color: inherit; }
 .node text { fill: var(--text); font-family: var(--font); pointer-events: none; }
 .node .lvl { font: 600 28px var(--mono); }
 .node .lock { font-size: 24px; }
-.planet-label { font-weight: 500; paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
+.planet-label { font-weight: 500; paint-order: stroke; stroke: #160a2e; stroke-width: 6px; }
 .sun-label { font-weight: 700; }
 .node:focus-visible .body { stroke: var(--text); stroke-dasharray: 6 4; }
 .node.sel .body { stroke-width: 5; }
@@ -197,3 +183,16 @@ button { font: inherit; color: inherit; }
 .bar-right { align-items: center; }
 .vol { width: 88px; height: 36px; accent-color: var(--accent); cursor: pointer; touch-action: pan-x; }
 .vol:disabled { opacity: .35; cursor: default; }
+
+/* panels float over the gradient like the hero's glass cards */
+.detail, .modal { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgb(10 0 30 / .45); }
+.chip { background: rgb(26 12 56 / .6); }
+.btn.primary { background: linear-gradient(135deg, #6a11cb, #8b35e8); border-color: #8b35e8; color: #fff; }
+
+/* fixed sky layer (a real element, since iOS Safari ignores background-attachment: fixed) */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 75% 45%, rgb(106 17 203 / .45) 0%, transparent 38%),
+    linear-gradient(135deg, #0f0720 0%, #1a0633 35%, #2d1060 65%, #6a11cb 100%);
+}
