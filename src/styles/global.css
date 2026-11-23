@@ -1,14 +1,14 @@
 /* ---------- tokens ----------
-   Purple space theme matching the hero on clarkngo.github.io. Orbit is always dark: the map is a night sky. */
+   Deep navy nebula: midnight blue fading to teal with a cyan glow. Orbit is always dark: the map is a night sky. */
 :root {
-  --bg: #0f0720;
-  --surface: rgb(26 12 56 / .78);
-  --surface-2: #2a1752;
-  --border: #46307a;
-  --text: #f1ecff;
-  --muted: #b3a6d6;
+  --bg: #050b1a;
+  --surface: rgb(10 22 44 / .78);
+  --surface-2: #13284a;
+  --border: #24426b;
+  --text: #e8f1ff;
+  --muted: #9db0cc;
   --accent: #7ee0b5;
-  --violet: #6a11cb;
+  --glow: #22d3ee;
   --sun: #ffd27a;
   --due: #ff9f5a;
   --good: #7ee0b5;
@@ -90,7 +90,7 @@ button { font: inherit; color: inherit; }
 .node text { fill: var(--text); font-family: var(--font); pointer-events: none; }
 .node .lvl { font: 600 28px var(--mono); }
 .node .lock { font-size: 24px; }
-.planet-label { font-weight: 500; paint-order: stroke; stroke: #160a2e; stroke-width: 6px; }
+.planet-label { font-weight: 500; paint-order: stroke; stroke: #071226; stroke-width: 6px; }
 .sun-label { font-weight: 700; }
 .node:focus-visible .body { stroke: var(--text); stroke-dasharray: 6 4; }
 .node.sel .body { stroke-width: 5; }
@@ -185,14 +185,30 @@ button { font: inherit; color: inherit; }
 .vol:disabled { opacity: .35; cursor: default; }
 
 /* panels float over the gradient like the hero's glass cards */
-.detail, .modal { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgb(10 0 30 / .45); }
-.chip { background: rgb(26 12 56 / .6); }
-.btn.primary { background: linear-gradient(135deg, #6a11cb, #8b35e8); border-color: #8b35e8; color: #fff; }
+.detail, .modal { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgb(0 5 20 / .5); }
+.chip { background: rgb(10 22 44 / .6); }
+.btn.primary { background: linear-gradient(135deg, #0e7490, #14b8a6); border-color: #14b8a6; color: #fff; }
 
 /* fixed sky layer (a real element, since iOS Safari ignores background-attachment: fixed) */
 body::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(circle at 75% 45%, rgb(106 17 203 / .45) 0%, transparent 38%),
-    linear-gradient(135deg, #0f0720 0%, #1a0633 35%, #2d1060 65%, #6a11cb 100%);
+    radial-gradient(circle at 72% 40%, rgb(34 211 238 / .22) 0%, transparent 40%),
+    radial-gradient(circle at 18% 85%, rgb(59 130 246 / .18) 0%, transparent 35%),
+    linear-gradient(135deg, #040817 0%, #071433 35%, #0b2547 65%, #0e4a5c 100%);
+}
+
+/* faint starfield over the nebula */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .55;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 72%, #cfe8ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 58% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 81% 63%, #bdf3ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 22% 48%, #e0f2ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 67% 88%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 46% 36%, #bdf3ff 50%, transparent 51%);
+  background-size: 420px 420px;
 }
