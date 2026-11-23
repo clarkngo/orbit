@@ -1,0 +1,9 @@
+---
+import Base from '../layouts/Base.astro';
+import App from '../components/App';
+import { maps } from '../lib/maps';
+---
+<Base>
+  <App client:only="preact" maps={maps} />
+  <noscript>Orbit needs JavaScript to draw the map.</noscript>
+</Base>

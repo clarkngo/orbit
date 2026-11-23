@@ -1,0 +1,227 @@
+{
+  "id": "ai",
+  "title": "Artificial Intelligence",
+  "summary": "Systems that learn patterns from data to predict, generate and act.",
+  "prompts": [
+    "In one sentence, how does machine learning differ from hand-written rules?",
+    "Name the three big learning paradigms."
+  ],
+  "children": [
+    {
+      "id": "ai.foundations",
+      "title": "ML Foundations",
+      "summary": "Data, models, loss and optimization: the loop under every learned system.",
+      "prompts": [
+        "What are the four ingredients of a supervised learning setup?",
+        "Why do we hold out a test set?"
+      ],
+      "children": [
+        {
+          "id": "ai.foundations.supervised",
+          "title": "Supervised Learning",
+          "summary": "Learn a mapping from inputs to labeled outputs: regression and classification.",
+          "prompts": ["Give one regression and one classification example.", "What is a label?"],
+          "children": []
+        },
+        {
+          "id": "ai.foundations.loss",
+          "title": "Loss Functions",
+          "summary": "A number that says how wrong the model is; training makes it smaller.",
+          "prompts": ["When would you use cross-entropy instead of mean squared error?", "What does the loss surface look like conceptually?"],
+          "children": []
+        },
+        {
+          "id": "ai.foundations.gradient-descent",
+          "title": "Gradient Descent",
+          "summary": "Step parameters opposite the gradient of the loss, scaled by a learning rate.",
+          "resources": [{ "title": "3Blue1Brown: Gradient descent", "url": "https://www.3blue1brown.com/lessons/gradient-descent" }],
+          "prompts": ["What happens if the learning rate is too large?", "Why is it called stochastic gradient descent when we use mini-batches?"],
+          "children": []
+        },
+        {
+          "id": "ai.foundations.generalization",
+          "title": "Overfitting & Generalization",
+          "summary": "Doing well on unseen data, not just memorizing the training set.",
+          "prompts": ["Name two signs of overfitting.", "Name three ways to reduce it."],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "ai.neural-nets",
+      "title": "Neural Networks",
+      "summary": "Stacks of linear layers and nonlinearities trained end to end with backpropagation.",
+      "prompts": ["Why does a network need nonlinear activations?", "What is a layer, concretely?"],
+      "children": [
+        {
+          "id": "ai.neural-nets.perceptron",
+          "title": "Neurons & Layers",
+          "summary": "Weighted sum plus bias, passed through an activation; many in parallel form a layer.",
+          "prompts": ["Write the formula for one neuron.", "What does a layer's weight matrix shape mean?"],
+          "children": []
+        },
+        {
+          "id": "ai.neural-nets.activations",
+          "title": "Activation Functions",
+          "summary": "ReLU, GELU, sigmoid, tanh: the nonlinearities that make depth useful.",
+          "prompts": ["Why did ReLU replace sigmoid in deep nets?", "What is the vanishing gradient problem?"],
+          "children": []
+        },
+        {
+          "id": "ai.neural-nets.backprop",
+          "title": "Backpropagation",
+          "summary": "The chain rule applied layer by layer to get gradients for every weight.",
+          "resources": [{ "title": "Karpathy: micrograd", "url": "https://github.com/karpathy/micrograd" }],
+          "prompts": ["Explain backprop in two sentences.", "Why compute gradients backward instead of forward?"],
+          "children": []
+        },
+        {
+          "id": "ai.neural-nets.cnn",
+          "title": "Convolutional Nets",
+          "summary": "Shared local filters that exploit spatial structure in images.",
+          "prompts": ["What does weight sharing buy you?", "What does pooling do?"],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "ai.transformers",
+      "title": "Transformers",
+      "summary": "Attention-based architecture behind modern language, vision and audio models.",
+      "resources": [{ "title": "Attention Is All You Need", "url": "https://arxiv.org/abs/1706.03762" }],
+      "prompts": ["What problem with RNNs did transformers solve?", "Name the main blocks of a transformer layer."],
+      "children": [
+        {
+          "id": "ai.transformers.tokenization",
+          "title": "Tokenization",
+          "summary": "Splitting text into subword tokens (BPE) the model maps to embeddings.",
+          "prompts": ["Why subwords instead of whole words or characters?", "Why can token counts differ between languages?"],
+          "children": []
+        },
+        {
+          "id": "ai.transformers.embeddings",
+          "title": "Embeddings",
+          "summary": "Dense vectors for tokens; similar meanings land near each other.",
+          "prompts": ["What is an embedding table?", "How is cosine similarity used with embeddings?"],
+          "children": []
+        },
+        {
+          "id": "ai.transformers.attention",
+          "title": "Self-Attention",
+          "summary": "Each token mixes information from others, weighted by query-key similarity.",
+          "resources": [{ "title": "The Illustrated Transformer", "url": "https://jalammar.github.io/illustrated-transformer/" }],
+          "prompts": ["Write softmax(QK^T/√d)V and explain each part.", "Why scale by √d?", "What does multi-head add?"],
+          "children": []
+        },
+        {
+          "id": "ai.transformers.positional",
+          "title": "Positional Encoding",
+          "summary": "Injecting token order, since attention alone is order-blind (sinusoidal, RoPE).",
+          "prompts": ["Why does attention need position information?", "What does RoPE rotate?"],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "ai.llms",
+      "title": "Large Language Models",
+      "summary": "Transformers pretrained on huge text corpora to predict the next token, then tuned to be useful.",
+      "prompts": ["What is the pretraining objective of a GPT-style model?", "What changes between a base model and a chat model?"],
+      "children": [
+        {
+          "id": "ai.llms.pretraining",
+          "title": "Pretraining & Scaling",
+          "summary": "Next-token prediction at scale; loss falls predictably with data, params and compute.",
+          "prompts": ["State the gist of scaling laws.", "Why does next-token prediction teach so much?"],
+          "children": []
+        },
+        {
+          "id": "ai.llms.alignment",
+          "title": "Fine-tuning & RLHF",
+          "summary": "Instruction tuning and preference optimization to make models helpful and safe.",
+          "prompts": ["What data does instruction tuning use?", "What does the reward model in RLHF learn?"],
+          "children": []
+        },
+        {
+          "id": "ai.llms.prompting",
+          "title": "Prompting",
+          "summary": "Steering a model with instructions, examples and structure in the context window.",
+          "prompts": ["What is few-shot prompting?", "Why does asking for step-by-step reasoning help?"],
+          "children": []
+        },
+        {
+          "id": "ai.llms.rag",
+          "title": "Retrieval-Augmented Generation",
+          "summary": "Fetch relevant documents and put them in context so answers are grounded.",
+          "prompts": ["Sketch the RAG pipeline in four steps.", "When is RAG better than fine-tuning?"],
+          "children": []
+        },
+        {
+          "id": "ai.llms.agents",
+          "title": "Agents & Tool Use",
+          "summary": "Models that call tools in a loop to act, observe and plan toward a goal.",
+          "prompts": ["What is a tool call, mechanically?", "Name two failure modes of agent loops."],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "ai.rl",
+      "title": "Reinforcement Learning",
+      "summary": "Learning by trial and error to maximize reward from an environment.",
+      "prompts": ["Define agent, environment, state, action and reward.", "What is the exploration-exploitation tradeoff?"],
+      "children": [
+        {
+          "id": "ai.rl.mdp",
+          "title": "Markov Decision Processes",
+          "summary": "The formal frame: states, actions, transitions, rewards and a discount factor.",
+          "prompts": ["What does the Markov property say?", "What does the discount factor γ control?"],
+          "children": []
+        },
+        {
+          "id": "ai.rl.q-learning",
+          "title": "Q-Learning",
+          "summary": "Learn the value of each action in each state from bootstrapped targets.",
+          "prompts": ["Write the Q-learning update rule.", "What did DQN add to make it work with images?"],
+          "children": []
+        },
+        {
+          "id": "ai.rl.policy-gradients",
+          "title": "Policy Gradients",
+          "summary": "Directly adjust a policy's parameters toward actions that earned more reward (REINFORCE, PPO).",
+          "prompts": ["Why do policy gradients have high variance?", "What does PPO's clipping prevent?"],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "ai.evaluation",
+      "title": "Evaluation & Safety",
+      "summary": "Measuring what models can do and keeping their behavior within bounds.",
+      "prompts": ["Why are static benchmarks not enough?", "Name two categories of AI risk."],
+      "children": [
+        {
+          "id": "ai.evaluation.metrics",
+          "title": "Metrics",
+          "summary": "Accuracy, precision, recall, F1, perplexity: picking the number that matches the goal.",
+          "prompts": ["When is accuracy misleading?", "Define precision and recall."],
+          "children": []
+        },
+        {
+          "id": "ai.evaluation.evals",
+          "title": "LLM Evals",
+          "summary": "Benchmarks, held-out tasks and model-graded evals for open-ended outputs.",
+          "prompts": ["What is benchmark contamination?", "What are the risks of LLM-as-judge?"],
+          "children": []
+        },
+        {
+          "id": "ai.evaluation.safety",
+          "title": "Alignment & Safety",
+          "summary": "Red-teaming, interpretability and guardrails against harmful or deceptive behavior.",
+          "prompts": ["What is a jailbreak?", "What does interpretability research try to find?"],
+          "children": []
+        }
+      ]
+    }
+  ]
+}
