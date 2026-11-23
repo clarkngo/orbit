@@ -1,0 +1,303 @@
+{
+  "id": "dsa",
+  "title": "Data Structures & Algorithms",
+  "summary": "Organizing data and stepping through it efficiently, measured with Big-O.",
+  "prompts": [
+    "Why do we measure algorithms with Big-O instead of seconds?",
+    "Name five core data structures."
+  ],
+  "children": [
+    {
+      "id": "dsa.complexity",
+      "title": "Complexity",
+      "summary": "Big-O time and space, best/worst/amortized cases.",
+      "resources": [
+        {
+          "title": "Big-O Cheat Sheet",
+          "url": "https://www.bigocheatsheet.com/"
+        }
+      ],
+      "prompts": [
+        "Order these: O(n log n), O(1), O(n²), O(log n), O(n).",
+        "What does amortized O(1) mean?"
+      ],
+      "children": [
+        {
+          "id": "dsa.complexity.big-o",
+          "title": "Big-O Notation",
+          "summary": "Upper-bound growth rate as input size goes to infinity; constants drop.",
+          "prompts": [
+            "Why do we drop constants?",
+            "Big-O of two nested loops over n?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.complexity.amortized",
+          "title": "Amortized Analysis",
+          "summary": "Averaging occasional expensive operations over many cheap ones, like dynamic array growth.",
+          "prompts": [
+            "Why is appending to a dynamic array amortized O(1)?",
+            "What growth factor makes that work?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.complexity.recursion",
+          "title": "Recursion & Master Theorem",
+          "summary": "Recurrences like T(n) = 2T(n/2) + n and how to solve them.",
+          "prompts": [
+            "Solve T(n) = 2T(n/2) + n.",
+            "What is the space cost of recursion?"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "dsa.linear",
+      "title": "Linear Structures",
+      "summary": "Arrays, linked lists, stacks, queues and hash tables.",
+      "prompts": [
+        "Array vs linked list: tradeoffs?",
+        "Which structure gives O(1) average lookup by key?"
+      ],
+      "children": [
+        {
+          "id": "dsa.linear.arrays",
+          "title": "Arrays & Strings",
+          "summary": "Contiguous memory, O(1) index access, O(n) inserts in the middle.",
+          "prompts": [
+            "Why is array access O(1)?",
+            "Cost of inserting at index 0?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.linear.linked-lists",
+          "title": "Linked Lists",
+          "summary": "Nodes with next pointers; O(1) insert at a known node, O(n) search.",
+          "prompts": [
+            "Reverse a linked list: describe the pointer moves.",
+            "How do you detect a cycle?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.linear.stacks-queues",
+          "title": "Stacks & Queues",
+          "summary": "LIFO and FIFO; deques and monotonic stacks build on them.",
+          "prompts": [
+            "Name a problem solved with a stack.",
+            "Implement a queue with two stacks: how?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.linear.hashing",
+          "title": "Hash Tables",
+          "summary": "Hash keys to buckets for O(1) average get/put; handle collisions by chaining or probing.",
+          "prompts": [
+            "Chaining vs open addressing?",
+            "Why does load factor matter?"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "dsa.trees",
+      "title": "Trees & Heaps",
+      "summary": "Hierarchical structures for ordered data and priorities.",
+      "prompts": [
+        "Define height and depth of a tree.",
+        "Why do balanced trees matter?"
+      ],
+      "children": [
+        {
+          "id": "dsa.trees.traversal",
+          "title": "Tree Traversals",
+          "summary": "Pre-, in-, post-order DFS and level-order BFS.",
+          "prompts": [
+            "Which traversal gives sorted order on a BST?",
+            "Iterative in-order: what do you keep on the stack?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.trees.bst",
+          "title": "Binary Search Trees",
+          "summary": "Left < node < right; O(log n) operations when balanced (AVL, red-black).",
+          "prompts": [
+            "How do you delete a node with two children?",
+            "What makes a BST degrade to O(n)?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.trees.heaps",
+          "title": "Heaps & Priority Queues",
+          "summary": "Array-backed complete trees with O(log n) push/pop and O(1) peek.",
+          "prompts": [
+            "How do you find the k largest items with a heap?",
+            "Why is heapify O(n)?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.trees.tries",
+          "title": "Tries",
+          "summary": "Prefix trees for fast word and prefix lookups.",
+          "prompts": [
+            "What is the cost of inserting a word of length L?",
+            "Name two problems tries are good for."
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "dsa.graphs",
+      "title": "Graphs",
+      "summary": "Nodes and edges: modeling networks, dependencies and maps.",
+      "prompts": [
+        "Adjacency list vs matrix?",
+        "Directed vs undirected, weighted vs unweighted?"
+      ],
+      "children": [
+        {
+          "id": "dsa.graphs.bfs-dfs",
+          "title": "BFS & DFS",
+          "summary": "Breadth-first finds shortest paths in unweighted graphs; depth-first explores fully.",
+          "prompts": [
+            "Why does BFS give shortest paths in unweighted graphs?",
+            "How do you avoid revisiting nodes?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.graphs.shortest-paths",
+          "title": "Shortest Paths",
+          "summary": "Dijkstra for non-negative weights, Bellman-Ford with negatives.",
+          "prompts": [
+            "Why does Dijkstra fail with negative edges?",
+            "Dijkstra's complexity with a heap?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.graphs.topo-sort",
+          "title": "Topological Sort",
+          "summary": "Order a DAG so every edge points forward (Kahn's algorithm or DFS).",
+          "prompts": [
+            "Describe Kahn's algorithm.",
+            "How does it detect a cycle?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.graphs.union-find",
+          "title": "Union-Find",
+          "summary": "Disjoint sets with path compression and union by rank, near O(1) per op.",
+          "prompts": [
+            "What do path compression and union by rank each do?",
+            "Name a problem union-find solves."
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "dsa.techniques",
+      "title": "Techniques",
+      "summary": "Reusable problem-solving patterns that turn brute force into efficient solutions.",
+      "prompts": [
+        "What's the first pattern you check when input is sorted?",
+        "How do you spot a DP problem?"
+      ],
+      "children": [
+        {
+          "id": "dsa.techniques.two-pointers",
+          "title": "Two Pointers & Sliding Window",
+          "summary": "Move two indices through a sequence to avoid nested loops.",
+          "prompts": [
+            "When does a sliding window apply?",
+            "Two-sum on a sorted array: how?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.techniques.binary-search",
+          "title": "Binary Search",
+          "summary": "Halve the search space each step, including searching over the answer.",
+          "prompts": [
+            "What is the loop invariant?",
+            "What does 'binary search on the answer' mean?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.techniques.dp",
+          "title": "Dynamic Programming",
+          "summary": "Overlapping subproblems plus optimal substructure: memoize or build bottom-up.",
+          "prompts": [
+            "Memoization vs tabulation?",
+            "Define the state and transition for climbing stairs."
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.techniques.backtracking",
+          "title": "Backtracking",
+          "summary": "Build candidates step by step and undo choices that can't lead to a solution.",
+          "prompts": [
+            "Sketch the backtracking template.",
+            "How does pruning help?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.techniques.greedy",
+          "title": "Greedy",
+          "summary": "Take the locally best choice when it provably leads to a global optimum.",
+          "prompts": [
+            "Give a problem where greedy works and one where it fails.",
+            "How do you justify a greedy choice?"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "dsa.sorting",
+      "title": "Sorting",
+      "summary": "Ordering data: comparison sorts and their limits, plus linear-time special cases.",
+      "prompts": [
+        "Why can't comparison sorts beat O(n log n)?",
+        "What does stable mean?"
+      ],
+      "children": [
+        {
+          "id": "dsa.sorting.merge-quick",
+          "title": "Merge & Quick Sort",
+          "summary": "Divide and conquer: merge is stable O(n log n); quick is in-place with O(n²) worst case.",
+          "prompts": [
+            "Why pick a random pivot?",
+            "Space cost of merge sort?"
+          ],
+          "children": []
+        },
+        {
+          "id": "dsa.sorting.linear",
+          "title": "Counting & Radix Sort",
+          "summary": "Beat O(n log n) when keys are small integers or fixed-width.",
+          "prompts": [
+            "When does counting sort win?",
+            "Why does radix sort need a stable inner sort?"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -11,7 +11,7 @@ interface Props { maps: MapNode[] }
 interface Entry { node: MapNode; parent?: MapNode; path: MapNode[] }
 
 const UNIVERSE: Omit<MapNode, 'children'> = {
-  id: '', title: 'Orbit', summary: 'Every topic is a sun. Click a planet to fly in.', prompts: [],
+  id: '', title: 'Orbit', summary: 'Each topic is a sun. Pick one to fly in.', prompts: [],
 };
 
 const STATE_LABEL: Record<NodeState, string> = {
