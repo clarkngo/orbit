@@ -1,5 +1,5 @@
 // Generative space-ambient background music, synthesized live with Web Audio (no files).
-// Layers: a slow-breathing drone pad, sparse pentatonic chimes through a long echo, and
+// Layers: a slow-breathing major-key pad, bell chimes and rising arpeggios through a long echo, and
 // faint filtered "solar wind". It never repeats exactly, so it loops without a seam.
 const KEY = 'orbit.music';
 
@@ -13,11 +13,14 @@ export const isMusicOn = () => { try { return localStorage.getItem(KEY) === '1';
 const remember = (on: boolean) => { try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {} };
 export const isPlaying = () => playing;
 
-// D minor pentatonic-ish, low and calm.
+// D Lydian: a major scale with a raised 4th, the classic "floating, full of wonder" sound.
 const ROOT = 146.83; // D3
-const SCALE = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
+const SCALE = [0, 2, 4, 6, 7, 9, 11];
 const hz = (semi: number, base = ROOT) => base * 2 ** (semi / 12);
-const CHORDS = [[0, 7, 15, 19], [-2, 5, 12, 17], [3, 10, 15, 22], [-4, 3, 10, 15]];
+// Dmaj9 → E/D (the Lydian lift) → Bm11 → Gmaj7#11: bright, open, never resolving too hard.
+const CHORDS = [[0, 7, 11, 16], [2, 9, 14, 18], [-3, 7, 9, 14], [-5, 6, 11, 14]];
+let chord = CHORDS[0];
+const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)];
 
 function echo(c: AudioContext, out: AudioNode) {
   const input = c.createGain();
@@ -34,10 +37,10 @@ function echo(c: AudioContext, out: AudioNode) {
 
 function pad(c: AudioContext, out: AudioNode) {
   const filter = c.createBiquadFilter();
-  filter.type = 'lowpass'; filter.frequency.value = 700; filter.Q.value = 0.7;
+  filter.type = 'lowpass'; filter.frequency.value = 1300; filter.Q.value = 0.6;
   // slow LFO opening and closing the filter: the "breathing"
   const lfo = c.createOscillator(); lfo.frequency.value = 1 / 16;
-  const lfoAmt = c.createGain(); lfoAmt.gain.value = 350;
+  const lfoAmt = c.createGain(); lfoAmt.gain.value = 600;
   lfo.connect(lfoAmt).connect(filter.frequency); lfo.start();
   filter.connect(out);
 
@@ -53,10 +56,10 @@ function pad(c: AudioContext, out: AudioNode) {
   let ci = 0;
   const change = () => {
     const t = c.currentTime;
-    const chord = CHORDS[ci++ % CHORDS.length];
+    chord = CHORDS[ci++ % CHORDS.length];
     voices.forEach((v, i) => {
       v.oscs.forEach((o) => o.frequency.setTargetAtTime(hz(chord[i]), t, 2.5));
-      v.g.gain.setTargetAtTime(i === 0 ? 0.09 : 0.05, t, 3);
+      v.g.gain.setTargetAtTime(i === 0 ? 0.07 : 0.045, t, 3);
     });
   };
   change();
@@ -68,18 +71,40 @@ function chimes(c: AudioContext, out: AudioNode) {
   const bus = echo(c, out);
   const ping = () => {
     const t = c.currentTime + 0.05;
-    const semi = SCALE[Math.floor(Math.random() * SCALE.length)] + 12;
+    // mostly chord tones, sometimes a scale color note, up in the sparkle register
+    const semi = (Math.random() < 0.7 ? pick(chord) % 12 : pick(SCALE)) + pick([12, 24, 24]);
     const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = hz(semi);
     const o2 = c.createOscillator(); o2.type = 'sine'; o2.frequency.value = hz(semi) * 2.01; // bell partial
     const g = c.createGain(); const g2 = c.createGain();
     const pan = c.createStereoPanner(); pan.pan.value = Math.random() * 1.4 - 0.7;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 4);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.04, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 4);
     g2.gain.setValueAtTime(0.0001, t); g2.gain.exponentialRampToValueAtTime(0.012, t + 0.01); g2.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
     o.connect(g).connect(pan); o2.connect(g2).connect(pan); pan.connect(bus);
     o.start(t); o2.start(t); o.stop(t + 4.2); o2.stop(t + 1.7);
-    timers.push(window.setTimeout(ping, 2500 + Math.random() * 6000));
+    timers.push(window.setTimeout(ping, 1800 + Math.random() * 4200));
   };
   timers.push(window.setTimeout(ping, 3000));
+}
+
+/** Gentle rising arpeggios: little "stardust" runs up through the current chord. */
+function sparkle(c: AudioContext, out: AudioNode) {
+  const bus = echo(c, out);
+  const run = () => {
+    const tones = [...chord].sort((a, b) => a - b).map((x) => x + 24);
+    const notes = [...tones, tones[0] + 12, tones[1] + 12];
+    const step = 0.16 + Math.random() * 0.08;
+    const t0 = c.currentTime + 0.05;
+    notes.forEach((semi, i) => {
+      const t = t0 + i * step;
+      const o = c.createOscillator(); o.type = 'triangle'; o.frequency.value = hz(semi);
+      const g = c.createGain();
+      const pan = c.createStereoPanner(); pan.pan.value = -0.6 + (1.2 * i) / notes.length;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.022, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
+      o.connect(g).connect(pan).connect(bus); o.start(t); o.stop(t + 2);
+    });
+    timers.push(window.setTimeout(run, 9000 + Math.random() * 9000));
+  };
+  timers.push(window.setTimeout(run, 6000));
 }
 
 function wind(c: AudioContext, out: AudioNode) {
@@ -92,7 +117,7 @@ function wind(c: AudioContext, out: AudioNode) {
   const lfo = c.createOscillator(); lfo.frequency.value = 1 / 23;
   const amt = c.createGain(); amt.gain.value = 300;
   lfo.connect(amt).connect(f.frequency);
-  const g = c.createGain(); g.gain.value = 0.05;
+  const g = c.createGain(); g.gain.value = 0.03;
   src.connect(f).connect(g).connect(out);
   src.start(); lfo.start();
   stopFns.push(() => { src.stop(); lfo.stop(); });
@@ -109,7 +134,7 @@ export function startMusic() {
   master.gain.setValueAtTime(0.0001, c.currentTime);
   master.gain.exponentialRampToValueAtTime(0.5, c.currentTime + 4); // slow fade in
   master.connect(c.destination);
-  pad(c, master); chimes(c, master); wind(c, master);
+  pad(c, master); chimes(c, master); sparkle(c, master); wind(c, master);
   playing = true; remember(true);
 }
 
